@@ -1,0 +1,16 @@
+# Barmenti website, built by GitHub Pages (Jekyll).
+title: ברמנתי
+description: כל המתכונים מאחורי הבר. גם בלי קליטה.
+lang: he
+
+# The site lives at https://oriamram.github.io/barmenti-site until it gets its own domain.
+# With a custom domain: set baseurl to "" and add a CNAME file with the domain.
+url: https://oriamram.github.io
+baseurl: /barmenti-site
+
+# Contact address shown on every page.
+contact_email: oriamram111@gmail.com
+
+markdown: kramdown
+exclude:
+  - README.md

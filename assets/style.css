@@ -1,0 +1,160 @@
+/* Barmenti's "behind the bar" look, as in the app: a dark warm bar, cream text, one red accent. */
+:root {
+  --bar: #17120f;
+  --bar-deep: #0a0706;
+  --shelf-glow: rgba(220, 95, 80, 0.07);
+  --edge: rgba(255, 214, 160, 0.09);
+  --cream: #f2e6d3;
+  --cream-soft: #bfaf99;
+  --cream-muted: #8a7b6a;
+  --brass: #d9574b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bar-deep);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--cream);
+  font-family: 'Assistant', system-ui, sans-serif;
+  font-size: 18px;
+  line-height: 1.7;
+  background:
+    radial-gradient(ellipse at 50% 0%, var(--shelf-glow) 0%, transparent 55%),
+    linear-gradient(180deg, var(--bar) 0%, var(--bar-deep) 100%);
+  background-attachment: fixed;
+}
+
+a {
+  color: var(--brass);
+  text-underline-offset: 3px;
+}
+
+.site-header,
+.content,
+.site-footer {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.site-header {
+  padding-top: 24px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--cream);
+  font-weight: 800;
+  font-size: 22px;
+  text-decoration: none;
+}
+
+.content {
+  flex: 1;
+  padding-top: 32px;
+  padding-bottom: 48px;
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 34px;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+h2 {
+  margin: 40px 0 8px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.updated,
+.content > p:first-of-type em {
+  color: var(--cream-muted);
+}
+
+p,
+li {
+  color: var(--cream-soft);
+}
+
+strong {
+  color: var(--cream);
+  font-weight: 600;
+}
+
+ul {
+  padding-inline-start: 22px;
+}
+
+li + li {
+  margin-top: 6px;
+}
+
+.site-footer {
+  padding-top: 24px;
+  padding-bottom: 32px;
+  border-top: 1px solid var(--edge);
+  color: var(--cream-muted);
+  font-size: 15px;
+}
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.site-footer nav a {
+  color: var(--cream-soft);
+  text-decoration: none;
+}
+
+.site-footer p {
+  margin: 12px 0 0;
+  color: var(--cream-muted);
+}
+
+/* Home page: the logo large, the promise under it. */
+.home .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.home .hero-logo {
+  width: 180px;
+  height: 180px;
+}
+
+.home h1 {
+  font-size: 52px;
+}
+
+.home .tagline {
+  margin: 8px 0 24px;
+  font-size: 22px;
+}
+
+.home .soon {
+  display: inline-block;
+  padding: 6px 16px;
+  border: 1px solid rgba(217, 87, 75, 0.35);
+  border-radius: 999px;
+  color: var(--brass);
+  font-weight: 600;
+}
