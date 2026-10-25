@@ -409,6 +409,60 @@ h3 {
   border-color: var(--campari);
 }
 
+/* Until it's pressed, the button nudges now and then: the dice gives a shake and a soft red ring
+   breathes out of the rim, so it reads as something to press. */
+.roll:not(.used) {
+  animation: beckon 3.6s ease-in-out 2.2s infinite;
+}
+
+.roll:not(.used) svg {
+  animation: shake 3.6s ease-in-out 2.2s infinite;
+}
+
+@keyframes beckon {
+  0%,
+  62%,
+  100% {
+    box-shadow:
+      0 10px 24px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 214, 160, 0.12),
+      0 0 0 0 rgba(217, 87, 75, 0);
+  }
+  76% {
+    box-shadow:
+      0 10px 24px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 214, 160, 0.12),
+      0 0 0 7px rgba(217, 87, 75, 0.2);
+  }
+  90% {
+    box-shadow:
+      0 10px 24px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 214, 160, 0.12),
+      0 0 0 12px rgba(217, 87, 75, 0);
+  }
+}
+
+@keyframes shake {
+  0%,
+  62%,
+  84%,
+  100% {
+    transform: rotate(0);
+  }
+  67% {
+    transform: rotate(-16deg);
+  }
+  72% {
+    transform: rotate(13deg);
+  }
+  77% {
+    transform: rotate(-8deg);
+  }
+  81% {
+    transform: rotate(4deg);
+  }
+}
+
 .roll svg {
   width: 26px;
   height: 26px;

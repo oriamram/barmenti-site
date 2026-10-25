@@ -77,8 +77,19 @@
     return a;
   }
 
+  // Bring the whole photo onto the screen (a little below the top), if any of it is cut off.
+  const light = document.querySelector('.light');
+  function showGlass() {
+    const box = light.getBoundingClientRect();
+    if (box.top >= 0 && box.bottom <= window.innerHeight) return;
+    window.scrollBy({ top: box.top - 12, behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
+
   function roll() {
     if (rolling) return;
+    // Once pressed, it has made its point: no more nudging.
+    rollButton.classList.add('used');
+    showGlass();
     const pool = cocktails.filter(spirits[spirit]).filter((c) => c.id !== current.id);
     if (!pool.length) return;
     const pickedOne = pool[Math.floor(Math.random() * pool.length)];
