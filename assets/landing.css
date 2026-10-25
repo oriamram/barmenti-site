@@ -1,0 +1,838 @@
+/*
+  Barmenti's landing page: "the bar is open". Mobile first: these rules are the phone layout, and
+  the wide-screen rules at the end only spread it out.
+  Layout: one spotlight on a dark bar holds a single cocktail; "דרבק לי קוקטייל" swaps what stands
+  in the light and shows its spec. After it, quietly: three nights out, the back shelf, and the
+  features printed like a cocktail menu. On phones a download bar stays at the bottom.
+  Text aligns to the start (right). Colors are the app's own (dark wood, cream, Campari red), plus
+  the amber of the shelf lights.
+*/
+:root {
+  --bar: #17120f;
+  --deep: #0a0706;
+  --wood: #22170f;
+  --cream: #f2e6d3;
+  --cream-soft: #bfaf99;
+  --cream-muted: #8a7b6a;
+  --campari: #d9574b;
+  --on-campari: #1f0807;
+  --amber: #e3a94b;
+  --edge: rgba(255, 214, 160, 0.1);
+  --well: #0d0a08;
+  --smoke: rgba(30, 23, 19, 0.94);
+
+  --font-display: 'Karantina', 'Assistant', 'Arial Narrow', sans-serif;
+  --font-body: 'Assistant', 'Segoe UI', Arial, sans-serif;
+
+  /* The side gutter, for rows that run edge to edge from inside .wrap. */
+  --gutter: 20px;
+  --bar-height: 76px;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--deep);
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  background: linear-gradient(180deg, var(--bar) 0%, var(--deep) 100%);
+  background-color: var(--bar);
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+
+/* Full width of the screen from inside .wrap: photos and swipeable rows run edge to edge. */
+.bleed {
+  width: calc(100% + var(--gutter) * 2);
+  margin-inline: calc(var(--gutter) * -1);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin: 0;
+  line-height: 0.88;
+  text-wrap: balance;
+}
+
+/* ---------- Top bar ---------- */
+
+.top {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 14px 0;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1;
+}
+
+.brand img {
+  width: 38px;
+  height: 38px;
+}
+
+.top-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding-inline: 4px;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--cream-soft);
+  text-decoration: none;
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  display: grid;
+  gap: 8px;
+  padding-block: 18px 48px;
+}
+
+.hero-text {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.hero h1 {
+  font-size: clamp(76px, 23vw, 120px);
+  letter-spacing: -0.01em;
+}
+
+.hero h1 span {
+  display: block;
+}
+
+.lead {
+  margin: 0;
+  max-width: 34ch;
+  font-size: 19px;
+  color: var(--cream-soft);
+}
+
+.fine {
+  margin: 0;
+  font-size: 15px;
+  color: var(--cream-muted);
+}
+
+/* On phones the download bar does this job; the hero's own buttons show on wide screens. */
+.hero .stores,
+.hero .fine {
+  display: none;
+}
+
+/* The stage: a bar top under one warm light. */
+.stage {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.light {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+/* The beam from above: a soft wedge of light that appears out of the dark (no top edge) and
+   melts into the pool it leaves on the wood. */
+.light::before {
+  content: '';
+  position: absolute;
+  inset: -16% 0 26%;
+  background: conic-gradient(
+    at 50% -25%,
+    transparent 163deg,
+    rgba(227, 169, 75, 0.16) 171deg,
+    rgba(227, 169, 75, 0.3) 180deg,
+    rgba(227, 169, 75, 0.16) 189deg,
+    transparent 197deg
+  );
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 55%, #000 72%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 55%, #000 72%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+  animation: bulb 1.6s ease-out both;
+}
+
+.light::after {
+  content: '';
+  position: absolute;
+  inset: auto 8% 5% 8%;
+  height: 24%;
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(227, 169, 75, 0.22), transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+  animation: bulb 1.6s ease-out both;
+}
+
+.glass {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The photo's own bar fades into the page, so the glass stands on this bar. */
+  -webkit-mask-image: radial-gradient(closest-side at 50% 52%, #000 58%, transparent 100%);
+  mask-image: radial-gradient(closest-side at 50% 52%, #000 58%, transparent 100%);
+  transition:
+    opacity 0.12s linear,
+    filter 0.12s linear;
+  animation: rise 0.9s 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.glass.shaking {
+  filter: blur(2px) brightness(0.9);
+}
+
+@keyframes bulb {
+  0% {
+    opacity: 0.25;
+  }
+  18% {
+    opacity: 0.9;
+  }
+  26% {
+    opacity: 0.4;
+  }
+  40%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0.4;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The spec, like the card from the bar's own book. Pulled up into the pool of light. */
+.spec {
+  position: relative;
+  z-index: 2;
+  margin-top: -36px;
+  display: grid;
+  gap: 12px;
+  transition: opacity 0.25s ease-out;
+}
+
+.spec.hidden {
+  opacity: 0;
+}
+
+.spec-head {
+  display: grid;
+  gap: 4px;
+}
+
+.spec h3 {
+  font-size: 48px;
+}
+
+.spec .en {
+  color: var(--cream-muted);
+  font-size: 15px;
+  direction: ltr;
+  justify-self: start;
+}
+
+.ings {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.ings li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+/* Each amount in a small recessed "jigger" well, as in the app. */
+.jigger {
+  flex: none;
+  min-width: 84px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--well);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.7),
+    inset 0 -1px 0 rgba(255, 214, 160, 0.08);
+  color: var(--campari);
+  font-weight: 800;
+  font-size: 15px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.serve {
+  margin: 0;
+  color: var(--cream-soft);
+  font-size: 16px;
+}
+
+/* Pick by spirit, then pull the lever. */
+.pick {
+  display: grid;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* One row you swipe, running off both edges of the screen. */
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-inline: var(--gutter);
+  padding-block: 2px;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex: none;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid var(--edge);
+  background: var(--smoke);
+  color: var(--cream-soft);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--campari);
+  border-color: var(--campari);
+  color: var(--on-campari);
+}
+
+.roll {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 64px;
+  border-radius: 999px;
+  border: 1px solid rgba(217, 87, 75, 0.55);
+  background: var(--smoke);
+  color: var(--cream);
+  font: inherit;
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 214, 160, 0.12);
+  transition:
+    border-color 0.2s,
+    transform 0.15s;
+}
+
+.roll:active {
+  transform: scale(0.98);
+  border-color: var(--campari);
+}
+
+.roll svg {
+  width: 26px;
+  height: 26px;
+  color: var(--campari);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.roll.rolling svg {
+  transform: rotate(540deg);
+}
+
+/* ---------- Store badges: Apple's and Google's official artwork, unchanged ---------- */
+
+.stores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.store {
+  display: block;
+  border-radius: 8px;
+  transition: transform 0.15s;
+}
+
+.store:active {
+  transform: scale(0.97);
+}
+
+/* The same height for both, as the stores ask (Google's badge is the wider one). */
+.store img {
+  height: 50px;
+  width: auto;
+}
+
+/* ---------- Sections after the hero ---------- */
+
+.section {
+  padding-block: 48px;
+  display: grid;
+  gap: 24px;
+}
+
+.section h2 {
+  font-size: clamp(60px, 17vw, 96px);
+}
+
+.section-intro {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--cream-soft);
+}
+
+/* Three nights out, one under the other. */
+.nights {
+  display: grid;
+  gap: 36px;
+}
+
+.night {
+  margin: 0;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.night img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: 50% 58%;
+  border-radius: 24px;
+  box-shadow:
+    0 18px 36px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 214, 160, 0.1);
+}
+
+.night figcaption {
+  display: grid;
+  gap: 6px;
+}
+
+.night h3 {
+  font-size: 46px;
+}
+
+.night p {
+  margin: 0;
+  color: var(--cream-soft);
+}
+
+.night .drink {
+  color: var(--amber);
+  font-weight: 700;
+}
+
+/* The back shelf: every illustrated cocktail, side by side, swiped. */
+.shelf {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+  padding-block: 4px 20px;
+  padding-inline: var(--gutter);
+}
+
+.shelf::-webkit-scrollbar {
+  display: none;
+}
+
+.tile {
+  flex: none;
+  width: 42vw;
+  max-width: 180px;
+  scroll-snap-align: start;
+  position: relative;
+  border: 0;
+  padding: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--wood);
+  cursor: pointer;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.55);
+  transition: transform 0.15s;
+}
+
+.tile:active {
+  transform: scale(0.96);
+}
+
+.tile img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.tile span {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 40px 12px 10px;
+  background: linear-gradient(180deg, transparent, rgba(10, 7, 6, 0.92));
+  color: var(--cream);
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1;
+  text-align: start;
+}
+
+/* The features, printed like a cocktail menu. On phones each line stacks. */
+.menu-card {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+  padding: 30px 22px 22px;
+  border-radius: 26px;
+  background: linear-gradient(180deg, #1e1713, #150f0c);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 214, 160, 0.1);
+  display: grid;
+}
+
+.menu-card h2 {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.item {
+  display: grid;
+  gap: 2px;
+  padding-block: 14px;
+  border-top: 1px dotted rgba(191, 175, 153, 0.25);
+}
+
+.item b {
+  font-size: 19px;
+  line-height: 1.3;
+}
+
+.item span {
+  color: var(--amber);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Last call. */
+.last {
+  text-align: center;
+  justify-items: center;
+  padding-block: 64px 56px;
+}
+
+.last h2 {
+  font-size: clamp(96px, 28vw, 200px);
+}
+
+.last .stores {
+  justify-content: center;
+}
+
+/* ---------- Download bar (phones) ---------- */
+
+.dock {
+  position: fixed;
+  z-index: 10;
+  inset: auto 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px))
+    max(16px, env(safe-area-inset-left, 0px));
+  background: linear-gradient(180deg, rgba(10, 7, 6, 0), rgba(10, 7, 6, 0.96) 34%);
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.dock.away {
+  transform: translateY(110%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dock p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--cream-soft);
+}
+
+.dock p b {
+  display: block;
+  color: var(--cream);
+  font-size: 17px;
+}
+
+.dock-badge {
+  flex: none;
+  display: block;
+}
+
+.dock-badge img {
+  height: 46px;
+  width: auto;
+}
+
+.dock-cta {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: var(--campari);
+  color: var(--on-campari);
+  font-weight: 800;
+  font-size: 18px;
+  text-decoration: none;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- Footer ---------- */
+
+.foot {
+  /* Room for the download bar. */
+  padding-block: 28px calc(var(--bar-height) + 28px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--edge);
+  display: grid;
+  gap: 10px;
+  color: var(--cream-muted);
+  font-size: 15px;
+}
+
+.foot nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+}
+
+.foot a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--cream-soft);
+  text-decoration: none;
+}
+
+.foot p {
+  margin: 0;
+}
+
+/* ---------- Bigger phones and tablets ---------- */
+
+@media (min-width: 600px) {
+  .store img {
+    height: 56px;
+  }
+
+  .item {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    border-top: 0;
+  }
+
+  .item::after {
+    content: '';
+    order: 1;
+    flex: 1;
+    min-width: 24px;
+    border-bottom: 2px dotted rgba(191, 175, 153, 0.35);
+    transform: translateY(-5px);
+  }
+
+  .item span {
+    order: 2;
+    text-align: end;
+  }
+
+  .menu-card {
+    padding: 40px 44px 28px;
+  }
+}
+
+/* ---------- Wide screens ---------- */
+
+@media (min-width: 900px) {
+  :root {
+    --gutter: 0px;
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    align-items: center;
+    gap: 24px 56px;
+    padding-block: 24px 80px;
+  }
+
+  .hero-text {
+    gap: 24px;
+  }
+
+  .hero h1 {
+    font-size: clamp(110px, 12vw, 176px);
+  }
+
+  .lead {
+    font-size: 22px;
+  }
+
+  .hero .stores {
+    display: flex;
+  }
+
+  .hero .fine {
+    display: block;
+  }
+
+  .stage {
+    justify-items: center;
+  }
+
+  .light,
+  .spec,
+  .pick {
+    width: min(100%, 480px);
+  }
+
+  .bleed {
+    margin-inline: 0;
+  }
+
+  .chips {
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+
+  .section {
+    padding-block: 80px;
+    gap: 32px;
+  }
+
+  .nights {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .night img {
+    aspect-ratio: 4 / 5;
+  }
+
+  .shelf {
+    margin-inline: calc(max(20px, (100vw - 1180px) / 2 + 20px) * -1);
+    padding-inline: max(20px, (100vw - 1180px) / 2 + 20px);
+    scroll-padding-inline: max(20px, (100vw - 1180px) / 2 + 20px);
+  }
+
+  .tile {
+    width: 180px;
+  }
+
+  .dock {
+    display: none;
+  }
+
+  .foot {
+    padding-block: 32px 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

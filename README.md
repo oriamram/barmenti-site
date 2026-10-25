@@ -8,13 +8,18 @@ Live at <https://oriamram.github.io/barmenti-site/>.
 
 | Page                 | File                | Linked from                                   |
 | -------------------- | ------------------- | --------------------------------------------- |
-| `/`                  | `index.html`        | -                                             |
+| `/`                  | `index.html`        | the landing page (store buttons)              |
 | `/privacy/`          | `privacy.md`        | the app (settings, sign-up), both store pages |
 | `/terms/`            | `terms.md`          | the app (settings, sign-up)                   |
 | `/delete-account/`   | `delete-account.md` | Google Play (account deletion URL)            |
 
 - **Edit a page:** change its Markdown and push; GitHub Pages rebuilds within a minute or two. When
   a policy changes, update its "עודכן לאחרונה" date.
+- **Landing page:** `index.html` is plain HTML (no Jekyll layout), mobile first, with its own
+  `assets/landing.css` and `assets/landing.js`. The cocktails it shows are Barmenti's own
+  illustrations (`assets/cocktails/`, recipes in `assets/cocktails.js`). The store buttons are
+  Apple's and Google's official Hebrew badges (`assets/badges/`, unchanged apart from trimming
+  Google's transparent margin); use only those for the store logos.
 - **Look:** one shared template (`_layouts/default.html`) and stylesheet (`assets/style.css`), in
   the app's colors. The font is Assistant (Google Fonts); the app's Discovery font is licensed for
   the app only.

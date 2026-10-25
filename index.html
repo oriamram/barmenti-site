@@ -1,9 +1,169 @@
----
-layout: default
-layout_class: home
----
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>ברמנ'תי</title>
+    <meta name="description" content="מעל 150 קוקטיילים בכיס: כמויות, כוס, גרניש ושלבי הכנה. למשמרת מאחורי הבר, ללילה בחוץ או לדייט. עובד גם בלי קליטה." />
+    <meta name="theme-color" content="#17120F" />
+    <meta property="og:title" content="ברמנ'תי יודע הכל" />
+    <meta property="og:description" content="מעל 150 קוקטיילים בכיס. למשמרת עמוסה, ללילה בחוץ, או לדייט שצריך להרשים." />
+    <meta property="og:image" content="https://oriamram.github.io/barmenti-site/assets/cocktails/division-bell-v1.webp" />
+    <meta property="og:locale" content="he_IL" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&family=Karantina:wght@400;700&display=swap" />
+    <link rel="stylesheet" href="assets/landing.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="top">
+        <a class="brand" href="./">
+          <img src="assets/logo.webp" alt="" width="44" height="44" />
+          <span>ברמנ'תי</span>
+        </a>
+        <a class="top-link" href="#download">להורדה</a>
+      </header>
 
-<img class="hero-logo" src="{{ '/assets/logo.webp' | relative_url }}" alt="הלוגו של ברמנתי: ג'יגר שנשפך" width="180" height="180" />
-<h1>ברמנתי</h1>
-<p class="tagline">כל המתכונים מאחורי הבר. גם בלי קליטה.</p>
-<p class="soon">בקרוב ב-App Store וב-Google Play</p>
+      <main>
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-text">
+            <h1 id="hero-title"><span>ברמנ'תי</span> <span>יודע הכל</span></h1>
+            <p class="lead">
+              מעל 150 קוקטיילים בכיס. למשמרת עמוסה מאחורי הבר, ללילה בחוץ עם החבר'ה, או לדייט שצריך להרשים.
+            </p>
+            <div class="stores">
+              <a class="store" data-store="apple" href="https://apps.apple.com/app/id6824944138" rel="noopener">
+                <img src="assets/badges/app-store.svg" alt="להורדה מ־App Store" width="146" height="50" />
+              </a>
+              <a class="store" data-store="play" href="https://play.google.com/store/apps/details?id=com.barmenti.app" rel="noopener">
+                <img src="assets/badges/google-play.png" alt="להורדה מ־Google Play" width="168" height="50" />
+              </a>
+            </div>
+            <p class="fine">חינם. עובד גם בלי קליטה.</p>
+          </div>
+
+          <div class="stage" id="stage">
+            <div class="light bleed">
+              <img
+                class="glass"
+                id="glass"
+                data-id="division-bell"
+                src="assets/cocktails/division-bell-v1.webp"
+                alt="דיוויז׳ן בל על הבר"
+                width="800"
+                height="800"
+              />
+            </div>
+            <div class="spec" id="spec" aria-live="polite"></div>
+            <div class="pick">
+              <div class="chips bleed" role="group" aria-label="סוג אלכוהול">
+                <button class="chip" type="button" data-spirit="all" aria-pressed="true">הכל</button>
+                <button class="chip" type="button" data-spirit="gin" aria-pressed="false">ג׳ין</button>
+                <button class="chip" type="button" data-spirit="rum" aria-pressed="false">רום</button>
+                <button class="chip" type="button" data-spirit="whiskey" aria-pressed="false">ויסקי</button>
+                <button class="chip" type="button" data-spirit="agave" aria-pressed="false">טקילה ומזקל</button>
+                <button class="chip" type="button" data-spirit="vodka" aria-pressed="false">וודקה</button>
+              </div>
+              <button class="roll" id="roll" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <rect x="3.5" y="3.5" width="17" height="17" rx="4" />
+                  <circle cx="8.5" cy="8.5" r="1.3" fill="currentColor" stroke="none" />
+                  <circle cx="15.5" cy="8.5" r="1.3" fill="currentColor" stroke="none" />
+                  <circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none" />
+                  <circle cx="8.5" cy="15.5" r="1.3" fill="currentColor" stroke="none" />
+                  <circle cx="15.5" cy="15.5" r="1.3" fill="currentColor" stroke="none" />
+                </svg>
+                דרבק לי קוקטייל
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="nights-title">
+          <h2 id="nights-title">קוקטייל לכל לילה</h2>
+          <div class="nights">
+            <figure class="night">
+              <img src="assets/cocktails/mezcal-negroni-v1.webp" alt="מזקל נגרוני בכוס לואו בול" loading="lazy" width="800" height="800" />
+              <figcaption>
+                <h3>מאחורי הבר</h3>
+                <p>שולחן של שמונה מזמין סבב, ואחד הקוקטיילים בכלל לא מוכר לכם? הכמויות כבר על המסך, לפני שהמגש יוצא.</p>
+              </figcaption>
+            </figure>
+            <figure class="night">
+              <img src="assets/cocktails/queens-park-swizzle-v1.webp" alt="קווינס פארק סוויזל בכוס הייבול" loading="lazy" width="800" height="800" />
+              <figcaption>
+                <h3>בלילה בחוץ</h3>
+                <p>יודעים בדיוק מה להזמין, גם במקום חדש. ואם אין לכם מושג, <span class="drink">דרבק לי</span> בוחר בשבילכם.</p>
+              </figcaption>
+            </figure>
+            <figure class="night">
+              <img src="assets/cocktails/rossini-v1.webp" alt="רוסיני בכוס פלוט" loading="lazy" width="800" height="800" />
+              <figcaption>
+                <h3>בדייט</h3>
+                <p><span class="drink">רוסיני</span> בבית: ארבעה תותים, פרוסקו, ושלוש דקות שנראות כמו הרבה מאמץ.</p>
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="shelf-title">
+          <h2 id="shelf-title">מהמדף</h2>
+          <p class="section-intro">חלק מהקוקטיילים שמחכים באפליקציה. לחצו על אחד, והוא עולה לבר.</p>
+          <div class="shelf bleed" id="shelf"></div>
+        </section>
+
+        <section class="section" aria-labelledby="menu-title">
+          <div class="menu-card">
+            <h2 id="menu-title">מה בתפריט</h2>
+            <div class="item"><b>חיפוש לפי שם, כינוי או מרכיב</b><span>גם עם שגיאות כתיב</span></div>
+            <div class="item"><b>עובד בלי קליטה</b><span>גם מתחת לאדמה</span></div>
+            <div class="item"><b>דרבק לי קוקטייל</b><span>לפי אלכוהול וטעם</span></div>
+            <div class="item"><b>מחשבון מנות</b><span>ממנה אחת עד 20</span></div>
+            <div class="item"><b>מצבי רוח וטריוויה</b><span>קלף חדש כל יום</span></div>
+            <div class="item"><b>טעינו? תקנו אותנו</b><span>מתקנים לכל הברמנים</span></div>
+          </div>
+        </section>
+
+        <section class="section last" id="download" aria-labelledby="last-title">
+          <h2 id="last-title">הבר פתוח.</h2>
+          <p class="section-intro">הורידו את ברמנ'תי, וכל המתכונים איתכם.</p>
+          <div class="stores">
+            <a class="store" data-store="apple" href="https://apps.apple.com/app/id6824944138" rel="noopener">
+              <img src="assets/badges/app-store.svg" alt="להורדה מ־App Store" width="146" height="50" />
+            </a>
+            <a class="store" data-store="play" href="https://play.google.com/store/apps/details?id=com.barmenti.app" rel="noopener">
+              <img src="assets/badges/google-play.png" alt="להורדה מ־Google Play" width="168" height="50" />
+            </a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="foot">
+        <nav aria-label="קישורים">
+          <a href="privacy/">מדיניות פרטיות</a>
+          <a href="terms/">תנאי שימוש</a>
+          <a href="delete-account/">מחיקת חשבון</a>
+          <a href="mailto:oriamram111@gmail.com">צרו קשר</a>
+        </nav>
+        <p>ברמנ'תי מיועדת לבני 18 ומעלה. שתו באחריות. תמונות הקוקטיילים באתר הן הדמיות.</p>
+        <p>© 2026 ברמנ'תי</p>
+      </footer>
+    </div>
+
+    <div class="dock" id="dock">
+      <p><b>ברמנ'תי</b>חינם. עובד גם בלי קליטה.</p>
+      <a class="dock-cta" id="dock-cta" href="#download">להורדה</a>
+      <a class="dock-badge" data-store="play" href="https://play.google.com/store/apps/details?id=com.barmenti.app" rel="noopener" hidden>
+        <img src="assets/badges/google-play.png" alt="להורדה מ־Google Play" width="148" height="44" />
+      </a>
+      <a class="dock-badge" data-store="apple" href="https://apps.apple.com/app/id6824944138" rel="noopener" hidden>
+        <img src="assets/badges/app-store.svg" alt="להורדה מ־App Store" width="128" height="44" />
+      </a>
+    </div>
+
+    <script src="assets/cocktails.js"></script>
+    <script src="assets/landing.js"></script>
+  </body>
+</html>
