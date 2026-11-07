@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>ברמנ'תי: מקלידים. יודעים.</title>
+    <!--
+      The link people share ("המליצו לחברים", WhatsApp, stories). Chats show the preview below;
+      opening it sends the phone straight to its store. A computer sees both store buttons.
+    -->
+    <meta name="description" content="168 קוקטיילים בכיס, עם כמויות, הכנה וצורת הגשה. חינם, וגם בלי קליטה." />
+    <meta name="theme-color" content="#17120F" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ברמנ'תי" />
+    <meta property="og:url" content="https://oriamram.github.io/barmenti-site/app/" />
+    <meta property="og:title" content="ברמנ'תי: מקלידים. יודעים." />
+    <meta property="og:description" content="168 קוקטיילים בכיס, עם כמויות, הכנה וצורת הגשה. חינם, וגם בלי קליטה." />
+    <meta property="og:image" content="https://oriamram.github.io/barmenti-site/assets/og.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="ברמנ'תי: חיפוש פייפר פליין באפליקציה" />
+    <meta property="og:locale" content="he_IL" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="../assets/favicon.png" />
+    <script>
+      // Straight to the phone's store. iPadOS reports itself as a Mac, so a touch Mac counts as iOS.
+      (function () {
+        var ua = navigator.userAgent || '';
+        var ios = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+        var android = /Android/i.test(ua);
+        if (ios) location.replace('https://apps.apple.com/il/app/id6824944138');
+        else if (android) location.replace('https://play.google.com/store/apps/details?id=com.barmenti.app');
+      })();
+    </script>
+    <style>
+      html, body { margin: 0; height: 100%; }
+      body {
+        display: grid; place-items: center; text-align: center; padding: 24px 16px; box-sizing: border-box;
+        background: linear-gradient(180deg, #17120f 0%, #0a0706 100%); color: #f2e6d3;
+        font-family: 'Assistant', 'Segoe UI', Arial, sans-serif;
+      }
+      img.logo { width: 88px; height: 88px; border-radius: 22px; }
+      h1 { font-size: 40px; margin: 18px 0 6px; }
+      h1 span { color: #d9574b; }
+      p { color: #bfaf99; font-size: 18px; margin: 0 0 26px; }
+      .stores { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+      .stores img { height: 50px; width: auto; display: block; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img class="logo" src="../assets/logo.webp" alt="" />
+      <h1>מקלידים. <span>יודעים.</span></h1>
+      <p>168 קוקטיילים בכיס. חינם, וגם בלי קליטה.</p>
+      <div class="stores">
+        <a href="https://apps.apple.com/il/app/id6824944138" rel="noopener">
+          <img src="../assets/badges/app-store.svg" alt="להורדה מ־App Store" width="146" height="50" />
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.barmenti.app" rel="noopener">
+          <img src="../assets/badges/google-play.png" alt="להורדה מ־Google Play" width="168" height="50" />
+        </a>
+      </div>
+    </main>
+  </body>
+</html>
