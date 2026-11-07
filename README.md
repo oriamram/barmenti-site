@@ -4,7 +4,7 @@ The public website of Barmenti (ברמנתי), a Hebrew cocktail-recipe app for 
 holds what the app stores require: the privacy policy, the terms of use, and how to delete an
 account. Built by GitHub Pages (Jekyll) from this repository; no local tooling needed.
 
-Live at <https://oriamram.github.io/barmenti-site/>.
+Live at <https://barmenti.com/> (DNS at GoDaddy; the old <https://oriamram.github.io/barmenti-site/> redirects there).
 
 | Page                 | File                | Linked from                                   |
 | -------------------- | ------------------- | --------------------------------------------- |
@@ -24,6 +24,6 @@ Live at <https://oriamram.github.io/barmenti-site/>.
   the app's colors. The font is Assistant (Google Fonts); the app's Discovery font is licensed for
   the app only.
 - **Contact address:** `contact_email` in `_config.yml` (the footer) and in the pages themselves.
-- **Own domain later:** add a `CNAME` file with the domain, set `baseurl: ""` in `_config.yml`, and
-  change `SITE` in the app's `src/config/links.ts`.
+- **Domain:** `barmenti.com` (the `CNAME` file; DNS at GoDaddy: four A records for GitHub Pages
+  and `www` → `oriamram.github.io`). The app's `SITE` in `src/config/links.ts` points here.
 - The page addresses are linked from the app and the store listings: don't rename them.
