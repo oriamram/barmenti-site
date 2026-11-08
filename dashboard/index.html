@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>ברמנ'תי · דאשבורד</title>
+    <!--
+      The owner's dashboard. The page is public; the data isn't: sign-in is the app's Supabase
+      account (Google), and every dashboard function in Supabase (`admin_*`) refuses anyone not in
+      the `admins` table. Counts and catalog data only, never users' names or emails.
+    -->
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#17120F" />
+    <link rel="icon" type="image/png" href="../assets/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
+    <style>
+      :root {
+        --bar: #17120f;
+        --deep: #0a0706;
+        --card: #1e1713;
+        --card-2: #261d18;
+        --edge: rgba(255, 214, 160, 0.09);
+        --edge-strong: rgba(255, 214, 160, 0.18);
+        --cream: #f2e6d3;
+        --soft: #bfaf99;
+        --muted: #8a7b6a;
+        --brass: #d9574b;
+        --gold: #d9b26a;
+        --good: #7fb77e;
+      }
+      * { box-sizing: border-box; }
+      html { background: var(--deep); }
+      body {
+        margin: 0; min-height: 100vh; color: var(--cream);
+        font-family: 'Assistant', system-ui, sans-serif; font-size: 16px; line-height: 1.5;
+        background:
+          radial-gradient(900px 500px at 85% -10%, rgba(217, 87, 75, 0.12), transparent 70%),
+          linear-gradient(180deg, var(--bar), var(--deep) 60%);
+        background-attachment: fixed;
+      }
+      button { font: inherit; color: inherit; cursor: pointer; }
+      .wrap { max-width: 1120px; margin: 0 auto; padding: 24px 16px 64px; }
+      [hidden] { display: none !important; }
+
+      /* Header */
+      header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+      header img { width: 44px; height: 44px; border-radius: 12px; }
+      header h1 { font-size: 24px; font-weight: 800; margin: 0; line-height: 1.1; }
+      header h1 span { color: var(--brass); }
+      header .who { margin-inline-start: auto; display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 14px; }
+      .ghost { background: none; border: 1px solid var(--edge-strong); border-radius: 999px; padding: 6px 14px; color: var(--soft); }
+      .ghost:hover { color: var(--cream); border-color: var(--soft); }
+
+      /* Gate (sign in, no access, loading) */
+      .gate { min-height: 70vh; display: grid; place-items: center; text-align: center; }
+      .gate h2 { font-size: 30px; margin: 16px 0 6px; }
+      .gate p { color: var(--soft); margin: 0 0 22px; }
+      .gate img { width: 76px; height: 76px; border-radius: 20px; }
+      .google {
+        display: inline-flex; align-items: center; gap: 12px; background: #fff; color: #1f1f1f;
+        border: 0; border-radius: 999px; padding: 12px 22px; font-weight: 600; font-size: 16px;
+      }
+      .google svg { width: 20px; height: 20px; }
+      .error { color: var(--brass); margin-top: 14px; font-size: 14px; }
+
+      /* Tabs */
+      nav { display: flex; gap: 6px; border-bottom: 1px solid var(--edge); margin-bottom: 24px; overflow-x: auto; }
+      nav button {
+        background: none; border: 0; padding: 10px 16px 12px; color: var(--soft); font-weight: 600; font-size: 17px;
+        border-bottom: 3px solid transparent; margin-bottom: -1px; white-space: nowrap;
+      }
+      nav button[aria-selected='true'] { color: var(--cream); border-bottom-color: var(--brass); }
+      .badge { display: inline-block; min-width: 22px; padding: 0 7px; margin-inline-start: 6px; border-radius: 999px; background: var(--brass); color: #fff; font-size: 13px; line-height: 22px; text-align: center; }
+
+      /* Blocks */
+      section { margin-bottom: 34px; }
+      .grid > section { margin-bottom: 0; }
+      .grid + section, .grid + .grid { margin-top: 14px; }
+      .grid.two + section { margin-top: 34px; }
+      h2.t { font-size: 20px; font-weight: 800; margin: 0 0 12px; display: flex; align-items: baseline; gap: 10px; }
+      h2.t small { color: var(--muted); font-weight: 600; font-size: 14px; }
+      .grid { display: grid; gap: 14px; }
+      .two { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+      .tiles { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-bottom: 30px; }
+      .card { background: linear-gradient(180deg, var(--card), #120e0c); border: 1px solid var(--edge); border-radius: 18px; padding: 16px 18px; }
+      .tile .n { font-size: 38px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+      .tile .l { color: var(--soft); margin-top: 6px; font-size: 15px; }
+      .empty { color: var(--muted); padding: 6px 0; }
+      .muted { color: var(--muted); }
+
+      /* Filter chips */
+      .chips { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+      .chip { background: var(--card); border: 1px solid var(--edge-strong); border-radius: 999px; padding: 5px 14px; color: var(--soft); font-size: 14px; }
+      .chip[aria-pressed='true'] { background: var(--cream); color: var(--bar); border-color: var(--cream); font-weight: 600; }
+
+      /* Inbox items */
+      .item { display: flex; gap: 14px; align-items: flex-start; }
+      .item + .item { margin-top: 12px; }
+      .thumb { width: 56px; height: 56px; border-radius: 12px; background: var(--card-2) center / cover; flex: none; }
+      .item .body { flex: 1; min-width: 0; }
+      .item .head { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+      .item .name { font-weight: 800; font-size: 17px; }
+      .tag { font-size: 13px; color: var(--soft); background: var(--card-2); border-radius: 999px; padding: 1px 10px; }
+      .tag.new { color: #fff; background: var(--brass); }
+      .tag.ok { color: var(--bar); background: var(--good); }
+      .msg { margin: 6px 0 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+      .meta { color: var(--muted); font-size: 13px; }
+      .actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+      .act { background: var(--card-2); border: 1px solid var(--edge-strong); border-radius: 999px; padding: 4px 14px; font-size: 14px; color: var(--soft); }
+      .act:hover { color: var(--cream); border-color: var(--soft); }
+      .act.primary { background: var(--brass); border-color: var(--brass); color: #fff; }
+      .item.done { opacity: 0.55; }
+
+      /* Tables */
+      table { width: 100%; border-collapse: collapse; font-size: 15px; }
+      th { text-align: start; color: var(--muted); font-weight: 600; font-size: 13px; padding: 0 0 8px; }
+      td { padding: 7px 0; border-top: 1px solid var(--edge); }
+      td.num, th.num { text-align: end; font-variant-numeric: tabular-nums; width: 70px; }
+
+      /* Charts: one hue (brass), labels in text colors */
+      .cols { position: relative; display: flex; align-items: flex-end; gap: 2px; height: 160px; padding-top: 8px; }
+      .cols .c { flex: 1; height: 100%; display: flex; align-items: flex-end; position: relative; }
+      .cols .c i { display: block; width: 100%; background: var(--brass); border-radius: 4px 4px 0 0; min-height: 0; }
+      .cols .c.zero i { background: var(--edge-strong); height: 2px !important; border-radius: 1px; }
+      .cols .c:hover i { filter: brightness(1.2); }
+      .axis { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; margin-top: 6px; border-top: 1px solid var(--edge); padding-top: 6px; }
+      .tip {
+        position: fixed; pointer-events: none; z-index: 10; background: var(--cream); color: var(--bar);
+        border-radius: 10px; padding: 6px 10px; font-size: 13px; font-weight: 600; white-space: nowrap;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      }
+      .bars { display: grid; gap: 8px; }
+      .bar { display: grid; grid-template-columns: minmax(90px, 34%) 1fr 36px; gap: 10px; align-items: center; font-size: 15px; }
+      .bar .track { height: 12px; border-radius: 4px; background: var(--card-2); overflow: hidden; }
+      .bar .track i { display: block; height: 100%; background: var(--brass); border-radius: 4px; }
+      .bar .v { text-align: end; font-variant-numeric: tabular-nums; color: var(--soft); }
+
+      /* Catalog lists */
+      .rank { display: flex; align-items: center; gap: 12px; }
+      .rank + .rank { margin-top: 10px; }
+      .rank .thumb { width: 44px; height: 44px; border-radius: 10px; }
+      .rank .name { flex: 1; font-weight: 600; }
+      .rank .v { color: var(--soft); font-variant-numeric: tabular-nums; }
+      .daily { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+      .daily .card { display: flex; gap: 14px; align-items: center; }
+      .daily .thumb { width: 72px; height: 72px; border-radius: 14px; }
+      .daily .when { color: var(--gold); font-weight: 600; font-size: 14px; }
+      .daily .name { font-weight: 800; font-size: 19px; }
+      .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+      .pills span { background: var(--card-2); border-radius: 999px; padding: 3px 12px; font-size: 14px; }
+      .allgood { color: var(--good); font-weight: 600; }
+
+      @media (max-width: 560px) {
+        header h1 { font-size: 20px; }
+        header .who span { display: none; }
+        .tile .n { font-size: 32px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div id="loading" class="gate"><p class="muted">טוען…</p></div>
+
+      <div id="signin" class="gate" hidden>
+        <div>
+          <img src="../assets/logo.webp" alt="" />
+          <h2>דאשבורד</h2>
+          <p>כניסה עם החשבון של ברמנ'תי.</p>
+          <button id="google" class="google" type="button">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+            התחברות עם Google
+          </button>
+          <div id="signin-error" class="error" hidden></div>
+        </div>
+      </div>
+
+      <div id="denied" class="gate" hidden>
+        <div>
+          <img src="../assets/logo.webp" alt="" />
+          <h2>אין גישה</h2>
+          <p>החשבון הזה לא מורשה לדאשבורד.</p>
+          <button class="ghost" type="button" data-signout>התנתקות</button>
+        </div>
+      </div>
+
+      <div id="app" hidden>
+        <header>
+          <img src="../assets/logo.webp" alt="" />
+          <h1>ברמנ'תי <span>· דאשבורד</span></h1>
+          <div class="who">
+            <span id="updated"></span>
+            <button class="ghost" type="button" id="refresh">רענון</button>
+            <button class="ghost" type="button" data-signout>התנתקות</button>
+          </div>
+        </header>
+
+        <nav role="tablist">
+          <button role="tab" data-tab="inbox" aria-selected="true">מה מחכה<span id="inbox-badge" class="badge" hidden></span></button>
+          <button role="tab" data-tab="users" aria-selected="false">משתמשים</button>
+          <button role="tab" data-tab="catalog" aria-selected="false">קטלוג</button>
+        </nav>
+
+        <div id="tab-inbox" role="tabpanel"></div>
+        <div id="tab-users" role="tabpanel" hidden></div>
+        <div id="tab-catalog" role="tabpanel" hidden></div>
+      </div>
+    </div>
+    <div id="tip" class="tip" hidden></div>
+
+    <script>
+      (function () {
+        var SUPABASE_URL = 'https://yafuqzwemmlvgzrkrxeu.supabase.co';
+        // Publishable key: public, the same one the app ships with.
+        var SUPABASE_KEY = 'sb_publishable_KTAyoQC-H81g1u0FQnb7pw_qZzyF6MM';
+        var IMAGES = SUPABASE_URL + '/storage/v1/object/public/cocktail-images/';
+
+        var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+          auth: { flowType: 'pkce', detectSessionInUrl: true, persistSession: true },
+        });
+
+        var LABELS = {
+          kinds: { ingredients: 'מרכיבים', amounts: 'כמויות', steps: 'הכנה', photo: 'תמונה', other: 'משהו אחר' },
+          reportStatus: { new: 'חדש', fixed: 'תוקן', rejected: 'נדחה' },
+          feedbackStatus: { new: 'חדש', read: 'נקרא', done: 'טופל' },
+          roles: { hobby: 'תחביב', bartender: 'ברמנים', bar_manager: 'מנהלי בר', school: 'בית ספר לברמנים', none: 'בלי תשובה' },
+          genders: { male: 'גברים', female: 'נשים', none: 'בלי תשובה' },
+          platforms: { ios: 'iPhone', android: 'Android', web: 'דפדפן', none: 'לא ידוע' },
+          providers: { google: 'Google', apple: 'Apple', email: 'מייל וסיסמה', none: 'אחר' },
+          strengthens: { true: 'כן', false: 'לא', none: 'בלי תשובה' },
+        };
+
+        var state = { tab: 'inbox', inbox: null, users: null, catalog: null, reportFilter: 'new', feedbackFilter: 'new' };
+        try { state.tab = localStorage.getItem('dash-tab') || 'inbox'; } catch (e) {}
+
+        function $(id) { return document.getElementById(id); }
+        function esc(s) {
+          return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+          });
+        }
+        function img(file) { return file ? "style=\"background-image:url('" + IMAGES + encodeURIComponent(file) + "')\"" : ''; }
+        var dateFmt = new Intl.DateTimeFormat('he-IL', { timeZone: 'Asia/Jerusalem', day: 'numeric', month: 'numeric', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+        var dayFmt = new Intl.DateTimeFormat('he-IL', { timeZone: 'UTC', day: 'numeric', month: 'numeric' });
+        function when(iso) { return dateFmt.format(new Date(iso)); }
+        function show(id) {
+          ['loading', 'signin', 'denied', 'app'].forEach(function (x) { $(x).hidden = x !== id; });
+        }
+
+        // ---------- Sign in ----------
+        $('google').addEventListener('click', function () {
+          sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/dashboard/' } })
+            .then(function (r) { if (r.error) fail(r.error); });
+        });
+        document.querySelectorAll('[data-signout]').forEach(function (b) {
+          b.addEventListener('click', function () { sb.auth.signOut().then(function () { show('signin'); }); });
+        });
+        function fail(err) {
+          var box = $('signin-error');
+          box.textContent = 'לא הצלחנו להתחבר: ' + (err.message || err);
+          box.hidden = false;
+          show('signin');
+        }
+
+        var started = false;
+        async function start(session) {
+          if (!session) { started = false; show('signin'); return; }
+          if (started) return;
+          started = true;
+          show('loading');
+          var admin = await sb.rpc('is_admin');
+          if (admin.error) { started = false; fail(admin.error); return; }
+          if (!admin.data) { show('denied'); return; }
+          show('app');
+          selectTab(state.tab);
+          await loadAll();
+        }
+        sb.auth.onAuthStateChange(function (_event, session) { setTimeout(function () { start(session); }, 0); });
+        var params = new URLSearchParams(location.search + location.hash.replace('#', '&'));
+        if (params.get('error_description')) fail(params.get('error_description'));
+
+        // ---------- Data ----------
+        async function loadAll() {
+          var r = await Promise.all([sb.rpc('admin_inbox'), sb.rpc('admin_users'), sb.rpc('admin_catalog')]);
+          var bad = r.find(function (x) { return x.error; });
+          if (bad) { $('tab-inbox').innerHTML = '<p class="error">שגיאה בטעינה: ' + esc(bad.error.message) + '</p>'; return; }
+          state.inbox = r[0].data; state.users = r[1].data; state.catalog = r[2].data;
+          $('updated').textContent = 'עודכן ' + new Intl.DateTimeFormat('he-IL', { hour: '2-digit', minute: '2-digit' }).format(new Date());
+          renderInbox(); renderUsers(); renderCatalog();
+        }
+        $('refresh').addEventListener('click', loadAll);
+
+        // ---------- Tabs ----------
+        document.querySelectorAll('nav [data-tab]').forEach(function (b) {
+          b.addEventListener('click', function () { selectTab(b.dataset.tab); });
+        });
+        function selectTab(tab) {
+          if (!$('tab-' + tab)) tab = 'inbox';
+          state.tab = tab;
+          try { localStorage.setItem('dash-tab', tab); } catch (e) {}
+          document.querySelectorAll('nav [data-tab]').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === tab)); });
+          ['inbox', 'users', 'catalog'].forEach(function (t) { $('tab-' + t).hidden = t !== tab; });
+        }
+
+        // ---------- Inbox ----------
+        function chips(name, current, options) {
+          return '<div class="chips">' + options.map(function (o) {
+            return '<button class="chip" data-filter="' + name + '" data-value="' + o[0] + '" aria-pressed="' + (o[0] === current) + '">' + esc(o[1]) + '</button>';
+          }).join('') + '</div>';
+        }
+        function renderInbox() {
+          var d = state.inbox;
+          var newReports = d.reports.filter(function (r) { return r.status === 'new'; }).length;
+          var newFeedback = d.feedback.filter(function (f) { return f.status === 'new'; }).length;
+          var badge = $('inbox-badge');
+          badge.textContent = newReports + newFeedback;
+          badge.hidden = newReports + newFeedback === 0;
+
+          var reports = d.reports.filter(function (r) { return state.reportFilter === 'all' || r.status === 'new'; });
+          var feedback = d.feedback.filter(function (f) { return state.feedbackFilter === 'all' || f.status === 'new'; });
+
+          var html = '';
+          html += '<section><h2 class="t">דיווחי טעויות <small>' + newReports + ' חדשים · ' + d.reports.length + ' בסך הכל</small></h2>';
+          html += chips('report', state.reportFilter, [['new', 'חדשים'], ['all', 'הכל']]);
+          html += '<div class="card">' + (reports.length ? reports.map(reportItem).join('') : '<div class="empty">' + (state.reportFilter === 'new' ? 'אין דיווחים חדשים.' : 'אין דיווחים.') + '</div>') + '</div></section>';
+
+          html += '<section><h2 class="t">ספרו לנו מה לשפר <small>' + newFeedback + ' חדשים · ' + d.feedback.length + ' בסך הכל</small></h2>';
+          html += chips('feedback', state.feedbackFilter, [['new', 'חדשים'], ['all', 'הכל']]);
+          html += '<div class="card">' + (feedback.length ? feedback.map(feedbackItem).join('') : '<div class="empty">' + (state.feedbackFilter === 'new' ? 'אין הודעות חדשות.' : 'אין הודעות.') + '</div>') + '</div></section>';
+
+          html += '<section><h2 class="t">חיפושים שלא מצאו כלום <small>מה שהכי הרבה חיפשו, ראשון</small></h2><div class="card">';
+          html += d.misses.length
+            ? '<table><thead><tr><th>חיפוש</th><th class="num">פעמים</th><th class="num" style="width:120px">אחרון</th></tr></thead><tbody>' +
+              d.misses.map(function (m) { return '<tr><td>' + esc(m.query) + '</td><td class="num">' + m.count + '</td><td class="num muted">' + esc(when(m.last).split(',')[0]) + '</td></tr>'; }).join('') +
+              '</tbody></table>'
+            : '<div class="empty">אין.</div>';
+          html += '</div></section>';
+          $('tab-inbox').innerHTML = html;
+        }
+        function statusTag(status, labels) {
+          var cls = status === 'new' ? 'tag new' : status === 'fixed' || status === 'done' ? 'tag ok' : 'tag';
+          return '<span class="' + cls + '">' + esc(labels[status] || status) + '</span>';
+        }
+        function reportItem(r) {
+          var acts = r.status === 'new'
+            ? '<button class="act primary" data-report="' + r.id + '" data-status="fixed">תוקן</button><button class="act" data-report="' + r.id + '" data-status="rejected">נדחה</button>'
+            : '<button class="act" data-report="' + r.id + '" data-status="new">החזרה לחדש</button>';
+          return '<div class="item' + (r.status === 'new' ? '' : ' done') + '"><div class="thumb" ' + img(r.image_url) + '></div><div class="body">' +
+            '<div class="head"><span class="name">' + esc(r.cocktail_name || r.cocktail_id) + '</span><span class="tag">' + esc(LABELS.kinds[r.kind] || r.kind) + '</span>' + statusTag(r.status, LABELS.reportStatus) + '</div>' +
+            '<div class="msg">' + esc(r.message) + '</div>' +
+            '<div class="meta">' + esc(when(r.created_at)) + (r.app_version ? ' · גרסה ' + esc(r.app_version) : '') + ' · ' + esc(r.cocktail_id) + '</div>' +
+            '<div class="actions">' + acts + '</div></div></div>';
+        }
+        function feedbackItem(f) {
+          var acts = f.status === 'done'
+            ? '<button class="act" data-feedback="' + f.id + '" data-status="new">החזרה לחדש</button>'
+            : (f.status === 'new' ? '<button class="act" data-feedback="' + f.id + '" data-status="read">נקרא</button>' : '') +
+              '<button class="act primary" data-feedback="' + f.id + '" data-status="done">טופל</button>';
+          return '<div class="item' + (f.status === 'new' ? '' : ' done') + '"><div class="body">' +
+            '<div class="head">' + statusTag(f.status, LABELS.feedbackStatus) + '<span class="meta">' + esc(when(f.created_at)) +
+            (f.platform ? ' · ' + esc(LABELS.platforms[f.platform] || f.platform) : '') + (f.app_version ? ' · גרסה ' + esc(f.app_version) : '') + '</span></div>' +
+            '<div class="msg">' + esc(f.message) + '</div><div class="actions">' + acts + '</div></div></div>';
+        }
+        $('tab-inbox').addEventListener('click', async function (e) {
+          var b = e.target.closest('button');
+          if (!b) return;
+          if (b.dataset.filter) {
+            state[b.dataset.filter + 'Filter'] = b.dataset.value;
+            renderInbox();
+            return;
+          }
+          var fn = b.dataset.report ? 'admin_set_report_status' : b.dataset.feedback ? 'admin_set_feedback_status' : null;
+          if (!fn) return;
+          b.disabled = true;
+          var args = b.dataset.report
+            ? { report_id: Number(b.dataset.report), new_status: b.dataset.status }
+            : { feedback_id: Number(b.dataset.feedback), new_status: b.dataset.status };
+          var r = await sb.rpc(fn, args);
+          if (r.error) { b.disabled = false; alert('לא נשמר: ' + r.error.message); return; }
+          var list = b.dataset.report ? state.inbox.reports : state.inbox.feedback;
+          var id = Number(b.dataset.report || b.dataset.feedback);
+          list.forEach(function (x) { if (x.id === id) x.status = b.dataset.status; });
+          renderInbox();
+        });
+
+        // ---------- Users ----------
+        function tile(n, label) { return '<div class="card tile"><div class="n">' + n + '</div><div class="l">' + esc(label) + '</div></div>'; }
+        function barList(counts, labels, order) {
+          counts = counts || {};
+          var keys = Object.keys(counts);
+          if (order) keys.sort(function (a, b) { return order.indexOf(a) - order.indexOf(b); });
+          else keys.sort(function (a, b) { return counts[b] - counts[a]; });
+          var max = Math.max.apply(null, keys.map(function (k) { return counts[k]; }).concat([1]));
+          return '<div class="bars">' + keys.map(function (k) {
+            return '<div class="bar"><span>' + esc(labels[k] || k) + '</span><span class="track"><i style="width:' + (counts[k] / max * 100) + '%"></i></span><span class="v">' + counts[k] + '</span></div>';
+          }).join('') + '</div>';
+        }
+        function renderUsers() {
+          var u = state.users;
+          var html = '<div class="grid tiles">' + tile(u.total, 'חשבונות') + tile(u.last_7_days, 'חדשים בשבוע האחרון') + tile(u.bartenders, 'ברמנים ומנהלי בר') + tile(u.workplace_count, 'ברים ובתי ספר שונים') + '</div>';
+
+          var max = Math.max.apply(null, u.by_day.map(function (d) { return d.count; }).concat([1]));
+          html += '<section><h2 class="t">הרשמות ב־30 הימים האחרונים <small>' + u.last_30_days + ' חשבונות</small></h2><div class="card"><div class="cols" id="signups">' +
+            u.by_day.map(function (d) {
+              var label = dayFmt.format(new Date(d.day + 'T00:00:00Z')) + ': ' + d.count + (d.count === 1 ? ' חשבון' : ' חשבונות');
+              return '<div class="c' + (d.count ? '' : ' zero') + '" data-tip="' + esc(label) + '" aria-label="' + esc(label) + '"><i style="height:' + (d.count / max * 100) + '%"></i></div>';
+            }).join('') +
+            '</div><div class="axis"><span>' + esc(dayFmt.format(new Date(u.by_day[0].day + 'T00:00:00Z'))) + '</span><span>היום</span></div></div></section>';
+
+          html += '<div class="grid two">';
+          html += '<section class="card"><h2 class="t">איך משתמשים</h2>' + barList(u.roles, LABELS.roles, ['bartender', 'bar_manager', 'school', 'hobby', 'none']) + '</section>';
+          html += '<section class="card"><h2 class="t">שיטת התחברות</h2>' + barList(u.providers, LABELS.providers) + '</section>';
+          html += '<section class="card"><h2 class="t">מכשיר ראשון</h2>' + barList(u.platforms, LABELS.platforms, ['ios', 'android', 'web', 'none']) + '</section>';
+          html += '<section class="card"><h2 class="t">מגדר</h2>' + barList(u.genders, LABELS.genders, ['male', 'female', 'none']) + '</section>';
+          html += '<section class="card"><h2 class="t">מחזקים קוקטיילים</h2>' + barList(u.strengthens, LABELS.strengthens, ['true', 'false', 'none']) + '</section>';
+          html += '<section class="card"><h2 class="t">דגמים</h2>' + (u.devices.length
+            ? '<table><tbody>' + u.devices.map(function (d) { return '<tr><td>' + esc(d.device) + '</td><td class="num">' + d.count + '</td></tr>'; }).join('') + '</tbody></table>'
+            : '<div class="empty">אין עדיין.</div>') + '</section>';
+          html += '</div>';
+
+          html += '<section><h2 class="t">ברים ובתי ספר <small>כפי שהמשתמשים כתבו</small></h2><div class="card">' + (u.workplaces.length
+            ? '<table><thead><tr><th>מקום</th><th class="num">חשבונות</th></tr></thead><tbody>' + u.workplaces.map(function (w) {
+                return '<tr><td>' + esc(w.name) + (w.school ? ' <span class="tag">בית ספר</span>' : '') + '</td><td class="num">' + w.count + '</td></tr>';
+              }).join('') + '</tbody></table>'
+            : '<div class="empty">אין עדיין.</div>') + '</div></section>';
+          $('tab-users').innerHTML = html;
+        }
+
+        // Hover tooltip for the sign-ups chart.
+        document.addEventListener('mousemove', function (e) {
+          var c = e.target.closest && e.target.closest('[data-tip]');
+          var tip = $('tip');
+          if (!c) { tip.hidden = true; return; }
+          tip.textContent = c.dataset.tip;
+          tip.hidden = false;
+          tip.style.left = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8) + 'px';
+          tip.style.top = e.clientY - 40 + 'px';
+        });
+
+        // ---------- Catalog ----------
+        // Same pick as the app (src/home/cocktail-of-the-day.ts): cocktails with a photo, by id,
+        // stepped by a large prime per calendar day.
+        function cocktailOfTheDay(list, day) {
+          var c = list.slice().sort(function (a, b) { return a.id < b.id ? -1 : 1; });
+          if (!c.length) return null;
+          var p = day.split('-').map(Number);
+          var n = Math.floor(Date.UTC(p[0], p[1] - 1, p[2]) / 86400000);
+          return c[(n * 7919) % c.length];
+        }
+        function israelDay(offset) {
+          var d = new Date(Date.now() + offset * 86400000);
+          return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem' }).format(d);
+        }
+        function rankList(items, empty) {
+          if (!items.length) return '<div class="empty">' + esc(empty) + '</div>';
+          return items.map(function (t) {
+            return '<div class="rank"><div class="thumb" ' + img(t.image_url) + '></div><span class="name">' + esc(t.name) + '</span><span class="v">' + t.count + '</span></div>';
+          }).join('');
+        }
+        function missing(items, label) {
+          return '<section class="card"><h2 class="t">' + esc(label) + ' <small>' + items.length + '</small></h2>' +
+            (items.length ? '<div class="pills">' + items.map(function (i) { return '<span title="' + esc(i.id) + '">' + esc(i.name || i.id) + '</span>'; }).join('') + '</div>'
+              : '<div class="allgood">✓ הכל מלא</div>') + '</section>';
+        }
+        function renderCatalog() {
+          var c = state.catalog;
+          var html = '<div class="grid tiles">' + tile(c.cocktails, 'קוקטיילים') + tile(c.with_photo, 'עם תמונה') + tile(c.ingredients, 'מרכיבים') + tile(c.favorites, 'סימונים במועדפים') + '</div>';
+
+          html += '<section><h2 class="t">הקוקטייל של היום</h2><div class="daily">' + [0, 1, 2].map(function (off) {
+            var pick = cocktailOfTheDay(c.daily_candidates, israelDay(off));
+            if (!pick) return '';
+            return '<div class="card"><div class="thumb" ' + img(pick.image_url) + '></div><div><div class="when">' + ['היום', 'מחר', 'מחרתיים'][off] + '</div><div class="name">' + esc(pick.name) + '</div></div></div>';
+          }).join('') + '</div></section>';
+
+          html += '<div class="grid two">';
+          html += '<section class="card"><h2 class="t">הכי הרבה במועדפים</h2>' + rankList(c.top_favorites, 'אין עדיין.') + '</section>';
+          html += '<section class="card"><h2 class="t">"המשקה שלי"</h2>' + rankList(c.top_signature, 'אף אחד לא בחר עדיין.') + '</section>';
+          html += '</div><div class="grid two">';
+          html += missing(c.missing_photo, 'קוקטיילים בלי תמונה');
+          html += missing(c.missing_color, 'קוקטיילים בלי צבע');
+          html += missing(c.missing_description, 'מרכיבים בלי הסבר');
+          html += '</div>';
+          $('tab-catalog').innerHTML = html;
+        }
+      })();
+    </script>
+  </body>
+</html>
