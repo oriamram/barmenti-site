@@ -472,8 +472,13 @@
           btn.classList.add('spin');
           var r = await Promise.all([sb.rpc('admin_inbox'), sb.rpc('admin_users'), sb.rpc('admin_catalog'), loadInstalls()]);
           btn.classList.remove('spin');
-          var bad = r.find(function (x) { return x.error; });
-          if (bad) { toast('שגיאה בטעינה: ' + bad.error.message); return; }
+          // Downloads (r[3]) may fail on their own; their card says why. The rest must load.
+          var bad = r.slice(0, 3).find(function (x) { return x.error; });
+          if (bad) {
+            toast('שגיאה בטעינה: ' + bad.error.message);
+            if (!state.users) $('tab-inbox').innerHTML = '<section class="card"><h2 class="t">לא הצלחנו לטעון</h2><div class="soft">' + esc(bad.error.message) + '</div></section>';
+            return;
+          }
           var before = state.users;
           state.inbox = r[0].data; state.users = r[1].data; state.catalog = r[2].data; state.installs = r[3];
           $('updated').textContent = 'חי · ' + new Intl.DateTimeFormat('he-IL', { hour: '2-digit', minute: '2-digit' }).format(new Date());
