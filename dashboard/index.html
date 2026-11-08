@@ -204,6 +204,13 @@
       @keyframes growx { from { transform: scaleX(0); } }
       .bar .v { text-align: end; font-variant-numeric: tabular-nums; color: var(--soft); }
 
+      /* Downloads vs sign-ups */
+      .src .k { color: var(--gold); font-weight: 600; font-size: 14px; }
+      .src .n { font-size: 46px; font-weight: 800; line-height: 1.05; margin: 4px 0 8px; }
+      .src .w { color: var(--muted); font-size: 13px; line-height: 1.55; }
+      .src .w b { color: var(--soft); }
+      code { font-family: ui-monospace, Consolas, monospace; font-size: 0.92em; color: var(--soft); background: var(--card-2); border-radius: 6px; padding: 0 5px; direction: ltr; unicode-bidi: isolate; }
+
       /* Funnel */
       .funnel { display: grid; gap: 10px; }
       .step { display: grid; grid-template-columns: 150px 1fr; gap: 14px; align-items: center; }
@@ -463,18 +470,30 @@
         async function loadAll(first) {
           var btn = $('refresh');
           btn.classList.add('spin');
-          var r = await Promise.all([sb.rpc('admin_inbox'), sb.rpc('admin_users'), sb.rpc('admin_catalog')]);
+          var r = await Promise.all([sb.rpc('admin_inbox'), sb.rpc('admin_users'), sb.rpc('admin_catalog'), loadInstalls()]);
           btn.classList.remove('spin');
           var bad = r.find(function (x) { return x.error; });
           if (bad) { toast('שגיאה בטעינה: ' + bad.error.message); return; }
           var before = state.users;
-          state.inbox = r[0].data; state.users = r[1].data; state.catalog = r[2].data;
+          state.inbox = r[0].data; state.users = r[1].data; state.catalog = r[2].data; state.installs = r[3];
           $('updated').textContent = 'חי · ' + new Intl.DateTimeFormat('he-IL', { hour: '2-digit', minute: '2-digit' }).format(new Date());
           celebrateNewMembers(before, first);
           renderHero(); renderInbox(); renderUsers(); renderCatalog();
           if (!first) revealAll();
         }
         $('refresh').addEventListener('click', function () { loadAll(false); });
+
+        // Downloads come from PostHog through the `admin-installs` Edge Function (it holds the key).
+        async function loadInstalls() {
+          try {
+            var r = await sb.functions.invoke('admin-installs', { body: {} });
+            if (r.error) {
+              var body = r.error.context && r.error.context.json ? await r.error.context.json().catch(function () { return null; }) : null;
+              return { error: (body && body.error) || r.error.message };
+            }
+            return r.data;
+          } catch (e) { return { error: String(e) }; }
+        }
 
         function celebrateNewMembers(before, first) {
           var latest = state.users.recent[0] ? state.users.recent[0].member_number : 0;
@@ -586,6 +605,7 @@
             '<div class="big">' + n(u.total) + '<small>חברים בבר</small></div>' +
             '<div class="soft">' + (u.today ? 'היום הצטרפו <b class="num">' + u.today + '</b>. ' : 'היום עוד לא הצטרף אף אחד. ') + 'הבא בתור יקבל את <b>#' + u.next_member + '</b>.</div>' +
             '<div class="pulse">' + deltaPill(u.last_7_days, u.prev_7_days, 'השבוע') +
+            (state.installs && !state.installs.error ? '<span class="pill">הורדות <b class="num">' + state.installs.total + '</b></span>' : '') +
             '<span class="pill">ברמנים <b class="num">' + u.bartenders + '</b></span>' +
             '<span class="pill">ברים ובתי ספר <b class="num">' + u.workplace_count + '</b></span>' +
             (waiting ? '<span class="pill cta" data-go="inbox">✋ ' + (waiting === 1 ? 'דבר אחד מחכה לך' : waiting + ' דברים מחכים לך') + '</span>' : '<span class="pill cta clean" data-go="inbox">✨ הבר נקי</span>') +
@@ -711,8 +731,8 @@
             return '<div class="bar"><span>' + esc(labels[k] || k) + '</span><span class="track"><i style="width:' + (counts[k] / max) * 100 + '%;animation-delay:' + i * 60 + 'ms"></i></span><span class="v">' + counts[k] + '</span></div>';
           }).join('') + '</div>';
         }
-        function columns(days, unit) {
-          var max = Math.max.apply(null, days.map(function (d) { return d.count; }).concat([1]));
+        function columns(days, unit, shared) {
+          var max = shared || Math.max.apply(null, days.map(function (d) { return d.count; }).concat([1]));
           return '<div class="cols">' + days.map(function (d, i) {
             var label = weekday.format(new Date(d.day + 'T00:00:00Z')) + ' ' + dayFmt.format(new Date(d.day + 'T00:00:00Z')) + ' · ' + d.count + ' ' + unit;
             return '<div class="c' + (d.count ? '' : ' zero') + '" data-tip="' + esc(label) + '" aria-label="' + esc(label) + '"><i style="height:' + (d.count / max) * 100 + '%;animation-delay:' + i * 18 + 'ms"></i></div>';
@@ -725,6 +745,8 @@
             tile(u.last_7_days, 'הצטרפו השבוע', '<span class="delta ' + (u.last_7_days >= u.prev_7_days ? 'up' : 'down') + '">' + (u.last_7_days >= u.prev_7_days ? '▲' : '▼') + ' מול ' + u.prev_7_days + '</span>') +
             tile(u.bartenders, 'ברמנים ומנהלי בר') +
             tile(u.workplace_count, 'ברים ובתי ספר') + '</div>';
+
+          html += downloadsSection(u);
 
           var f = u.funnel, steps = [
             ['accounts', 'נרשמו', 'פתחו חשבון'],
@@ -779,6 +801,42 @@
               }).join('') + '</tbody></table>'
             : '<div class="empty">אין עדיין.</div>') + '</section>';
           $('tab-users').innerHTML = html;
+        }
+
+        function fillDays(days, list) {
+          var map = {};
+          (list || []).forEach(function (d) { map[String(d.day).slice(0, 10)] = d.count; });
+          return days.map(function (d) { return { day: d.day, count: map[d.day] || 0 }; });
+        }
+        function downloadsSection(u) {
+          var ins = state.installs || { error: 'not loaded' };
+          var head = '<h2 class="t">הורדות מול נרשמים <small>מאיפה כל מספר מגיע: בשורה שמתחתיו</small></h2>';
+          var signups = '<div class="card src"><div class="k">נרשמים</div><div class="n">' + n(u.total) + '</div>' +
+            '<div class="w"><b>Supabase</b>, טבלת <code>profiles</code>: כל חשבון שנפתח באפליקציה (Google, Apple או מייל). בלי חשבון ההדגמה של החנויות.</div></div>';
+          if (ins.error) {
+            var why = ins.error === 'missing_key'
+              ? 'חסר מפתח קריאה של PostHog בשרת. צרו ב־PostHog מפתח אישי (Personal API key) עם ההרשאה <code>query:read</code> לפרויקט Barmenti, ושמרו אותו ב־Supabase → Edge Functions → Secrets בשם <code>POSTHOG_PERSONAL_API_KEY</code>.'
+              : 'לא הצלחנו לקרוא מ־PostHog: ' + esc(ins.error);
+            return '<section class="reveal">' + head + '<div class="grid two">' +
+              '<div class="card src"><div class="k">הורדות</div><div class="n muted">—</div><div class="w">' + why + '</div></div>' + signups + '</div></section>';
+          }
+          var rate = ins.total ? Math.round((u.total / ins.total) * 100) : 0;
+          var html = '<section class="reveal">' + head + '<div class="grid three">';
+          html += '<div class="card src"><div class="k">הורדות</div><div class="n">' + n(ins.total) + '</div>' +
+            '<div class="soft" style="font-size:14px;margin-bottom:6px">' + Object.keys(ins.platforms).sort(function (a, b) { return ins.platforms[b] - ins.platforms[a]; }).map(function (k) { return esc(k) + ' <b>' + ins.platforms[k] + '</b>'; }).join(' · ') + '</div>' +
+            '<div class="w"><b>PostHog</b>, האירוע <code>Application Installed</code>: הפעם הראשונה שהאפליקציה מהחנות נפתחת במכשיר, עוד לפני הרשמה. נאסף מ־' + esc(ins.since ? new Date(ins.since).toLocaleDateString('he-IL') : '?') + '. התקנה מחדש נספרת שוב; מי שהוריד ולא פתח לא נספר.</div></div>';
+          html += signups;
+          html += '<div class="card src"><div class="k">מי שהוריד, נרשם?</div><div class="n">' + n(rate) + '<span style="font-size:24px">%</span></div>' +
+            '<div class="w">נרשמים חלקי הורדות. ' + (ins.total > u.total ? '<b>' + (ins.total - u.total) + '</b> הורידו ולא נרשמו (בערך).' : '') + ' השבוע: ' + ins.last_7_days + ' הורדות, ' + u.last_7_days + ' נרשמים.</div></div>';
+          html += '</div>';
+          // Same scale on both, so a day's bars compare.
+          var dl = fillDays(u.by_day, ins.by_day);
+          var top = Math.max.apply(null, dl.concat(u.by_day).map(function (d) { return d.count; }).concat([1]));
+          html += '<div class="grid two" style="margin-top:16px">' +
+            '<div class="card"><h2 class="t">הורדות ביום <small>PostHog</small></h2>' + columns(dl, 'הורדות', top) + '</div>' +
+            '<div class="card"><h2 class="t">נרשמים ביום <small>Supabase · אותו קנה מידה</small></h2>' + columns(u.by_day, 'נרשמו', top) + '</div></div>';
+          html += '<div class="w muted" style="margin-top:10px;font-size:13px">המספרים הרשמיים של החנויות (כולל מי שהוריד ולא פתח): App Store Connect → Analytics → First-Time Downloads, ו־Play Console → סטטיסטיקה.</div>';
+          return html + '</section>';
         }
 
         // ---------- The bar (catalog) ----------
