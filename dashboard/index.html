@@ -1093,7 +1093,8 @@
         $('tab-clients').addEventListener('submit', async function (e) {
           e.preventDefault();
           var form = e.target;
-          if (form.id === 'client-form') {
+          // Not form.id: the hidden input named "id" takes that name on a form.
+          if (form.matches('#client-form')) {
             var bar = {};
             new FormData(form).forEach(function (v, k) { bar[k] = String(v); });
             if (!bar.name.trim()) return;
