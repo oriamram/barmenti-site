@@ -1036,11 +1036,16 @@
           if (b.contact_name) contact.push('👤 ' + esc(b.contact_name));
           if (b.contact_phone) contact.push('📞 <a href="tel:' + esc(b.contact_phone) + '">' + esc(b.contact_phone) + '</a>');
           if (b.contact_email) contact.push('✉️ <a href="mailto:' + esc(b.contact_email) + '">' + esc(b.contact_email) + '</a>');
-          return '<section class="card client"><div class="head"><span class="name">' + esc(b.name) + '</span><span class="actions" style="margin:0">' +
+          var demo = b.is_demo
+            ? '<div class="codebox"><div class="soft">בר לדוגמה לבודקי App Review · הקוד הקבוע (מחבר מכשיר חדש בכל שימוש)</div><div class="code num">' + esc(b.demo_code) + '</div>' +
+              '<div class="actions" style="justify-content:center"><button type="button" class="act" data-cleardemo="' + b.id + '">ביטול הקוד הקבוע</button></div></div>'
+            : '';
+          return '<section class="card client"><div class="head"><span class="name">' + esc(b.name) + (b.is_demo ? ' <span class="tag new">לבודקים</span>' : '') + '</span><span class="actions" style="margin:0">' +
+            (b.is_demo ? '' : '<button type="button" class="act" data-demo="' + b.id + '" data-name="' + esc(b.name) + '">קוד קבוע לבודקים</button>') +
             '<button type="button" class="act" data-edit="' + b.id + '">עריכה</button><button type="button" class="act" data-delete="' + b.id + '" data-name="' + esc(b.name) + '">מחיקה</button></span></div>' +
             (contact.length ? '<div class="info">' + contact.map(function (c) { return '<span>' + c + '</span>'; }).join('') + '</div>' : '') +
             (b.notes ? '<div class="notes">' + esc(b.notes) + '</div>' : '') +
-            '<div class="muted" style="font-size:13px;margin-top:4px">לקוח מ-' + esc(when(b.created_at)) + '</div>' +
+            '<div class="muted" style="font-size:13px;margin-top:4px">לקוח מ-' + esc(when(b.created_at)) + '</div>' + demo +
             '<div class="devices">' + b.devices.map(deviceRow).join('') +
             '<form class="newdevice" data-bar="' + b.id + '"><input name="device" placeholder="שם המכשיר (בר ראשי…)" maxlength="60" required /><button class="act primary" type="submit">+ מכשיר</button></form></div></section>';
         }
@@ -1051,7 +1056,8 @@
           if (!force && (state.editing || (state.code && new Date(state.code.expires_at) > Date.now()) ||
             (root.contains(document.activeElement) && /INPUT|TEXTAREA/.test(document.activeElement.tagName)))) return;
           var connected = state.bars.reduce(function (s, b) { return s + b.devices.filter(function (d) { return d.status === 'connected'; }).length; }, 0);
-          var html = '<div class="grid tiles">' + tile(state.bars.length, 'לקוחות') + tile(connected, 'מכשירים מחוברים') + '</div>';
+          var clients = state.bars.filter(function (b) { return !b.is_demo; }).length;
+          var html = '<div class="grid tiles">' + tile(clients, 'לקוחות') + tile(connected, 'מכשירים מחוברים') + '</div>';
           html += state.editing ? clientForm(state.editing === 'new' ? null : state.bars.find(function (b) { return b.id === state.editing; })) :
             '<div class="actions" style="margin:16px 0"><button type="button" class="act primary" data-newclient>+ לקוח חדש</button></div>';
           html += state.bars.length ? '<div class="grid">' + state.bars.map(clientCard).join('') + '</div>' :
@@ -1083,6 +1089,18 @@
             var x = await sb.rpc('admin_disconnect_bar_device', { device_id: b.dataset.disconnect });
             if (x.error) { toast('שגיאה: ' + x.error.message); return; }
             toast('המכשיר נותק'); await reloadBars(); return;
+          }
+          if (b.dataset.demo) {
+            if (!confirm('להפוך את "' + b.dataset.name + '" לבר לדוגמה לבודקי App Review? הקוד הקבוע מחבר אליו מכשיר חדש בכל שימוש, אז רק לבר בלי נתונים של מסעדה אמיתית.')) return;
+            var m = await sb.rpc('admin_bar_demo_code', { bar_id: b.dataset.demo });
+            if (m.error) { toast('שגיאה: ' + m.error.message); return; }
+            toast('קוד קבוע: ' + m.data); await reloadBars(); return;
+          }
+          if (b.dataset.cleardemo) {
+            if (!confirm('לבטל את הקוד הקבוע? הבודקים לא יוכלו להתחבר איתו.')) return;
+            var z = await sb.rpc('admin_clear_bar_demo_code', { bar_id: b.dataset.cleardemo });
+            if (z.error) { toast('שגיאה: ' + z.error.message); return; }
+            toast('הקוד בוטל'); await reloadBars(); return;
           }
           if (b.dataset.newcode) {
             var c = await sb.rpc('admin_bar_device_code', { device_id: b.dataset.newcode });
