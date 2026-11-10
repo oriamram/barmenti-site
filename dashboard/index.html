@@ -273,6 +273,29 @@
       .pills span { background: var(--card-2); border-radius: 999px; padding: 3px 12px; font-size: 14px; }
       .allgood { color: var(--good); font-weight: 600; }
 
+      /* Clients: restaurants and their bar devices. */
+      .form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+      .form label { display: grid; gap: 4px; font-size: 14px; color: var(--soft); }
+      .form label.wide { grid-column: 1 / -1; }
+      .form input, .form textarea, .newdevice input { background: var(--card-2); border: 1px solid var(--edge-strong); border-radius: 12px; padding: 9px 12px; color: var(--cream); font: inherit; width: 100%; }
+      .form textarea { min-height: 70px; resize: vertical; }
+      .form input:focus, .form textarea:focus, .newdevice input:focus { outline: 0; border-color: var(--brass); }
+      .client .head { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; justify-content: space-between; }
+      .client .name { font-size: 22px; font-weight: 800; }
+      .client .info { display: flex; flex-wrap: wrap; gap: 4px 12px; color: var(--soft); font-size: 15px; margin: 6px 0 0; }
+      .client .info a { color: var(--cream); text-decoration: none; border-bottom: 1px dotted var(--muted); }
+      .client .notes { color: var(--muted); font-size: 14px; margin-top: 6px; white-space: pre-wrap; }
+      .devices { margin-top: 14px; border-top: 1px solid var(--edge); padding-top: 12px; display: grid; gap: 10px; }
+      .device { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+      .device .dname { font-weight: 700; }
+      .device .meta { color: var(--muted); font-size: 13px; }
+      .device .actions { margin: 0 auto 0 0; }
+      .newdevice { display: flex; gap: 8px; margin-top: 4px; max-width: 420px; }
+      .newdevice button { white-space: nowrap; }
+      .codebox { margin-top: 12px; border: 1px dashed var(--brass); border-radius: 16px; padding: 14px 18px; text-align: center; background: var(--brass-soft); }
+      .codebox .code { font-size: 46px; font-weight: 800; letter-spacing: 0.25em; direction: ltr; font-variant-numeric: tabular-nums; }
+      .codebox .soft { font-size: 14px; }
+
       /* Toast + confetti */
       .toast { position: fixed; bottom: 22px; left: 50%; transform: translate(-50%, 30px); opacity: 0; z-index: 70; background: var(--cream); color: var(--bar); border-radius: 999px; padding: 10px 20px; font-weight: 800; box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6); transition: all 0.45s var(--ease); white-space: nowrap; }
       .toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -346,13 +369,15 @@
           <button role="tab" data-tab="inbox" aria-selected="true">מה מחכה<span id="inbox-badge" class="badge" hidden></span><kbd>1</kbd></button>
           <button role="tab" data-tab="users" aria-selected="false">אנשים<kbd>2</kbd></button>
           <button role="tab" data-tab="catalog" aria-selected="false">הבר<kbd>3</kbd></button>
+          <button role="tab" data-tab="clients" aria-selected="false">לקוחות<kbd>4</kbd></button>
         </nav>
 
         <div id="tab-inbox" class="tabpanel" role="tabpanel"></div>
         <div id="tab-users" class="tabpanel" role="tabpanel" hidden></div>
         <div id="tab-catalog" class="tabpanel" role="tabpanel" hidden></div>
+        <div id="tab-clients" class="tabpanel" role="tabpanel" hidden></div>
 
-        <div class="keys"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> לשוניות · <kbd>R</kbd> רענון · <kbd>/</kbd> חיפוש קוקטייל</div>
+        <div class="keys"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> לשוניות · <kbd>R</kbd> רענון · <kbd>/</kbd> חיפוש קוקטייל</div>
       </div>
     </div>
     <div id="tip" class="tip" hidden></div>
@@ -387,7 +412,7 @@
           days: ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'],
         };
 
-        var state = { tab: 'inbox', inbox: null, users: null, catalog: null, reportFilter: 'new', feedbackFilter: 'new', query: '' };
+        var state = { tab: 'inbox', inbox: null, users: null, catalog: null, reportFilter: 'new', feedbackFilter: 'new', query: '', bars: null, editing: null, code: null };
         function store(key, value) {
           try { if (value === undefined) return localStorage.getItem(key); localStorage.setItem(key, value); } catch (e) { return null; }
         }
@@ -470,7 +495,7 @@
         async function loadAll(first) {
           var btn = $('refresh');
           btn.classList.add('spin');
-          var r = await Promise.all([sb.rpc('admin_inbox'), sb.rpc('admin_users'), sb.rpc('admin_catalog'), loadInstalls()]);
+          var r = await Promise.all([sb.rpc('admin_inbox'), sb.rpc('admin_users'), sb.rpc('admin_catalog'), loadInstalls(), sb.rpc('admin_bars')]);
           btn.classList.remove('spin');
           // Downloads (r[3]) may fail on their own; their card says why. The rest must load.
           var bad = r.slice(0, 3).find(function (x) { return x.error; });
@@ -481,9 +506,10 @@
           }
           var before = state.users;
           state.inbox = r[0].data; state.users = r[1].data; state.catalog = r[2].data; state.installs = r[3];
+          if (!r[4].error) state.bars = r[4].data;
           $('updated').textContent = 'חי · ' + new Intl.DateTimeFormat('he-IL', { hour: '2-digit', minute: '2-digit' }).format(new Date());
           celebrateNewMembers(before, first);
-          renderHero(); renderInbox(); renderUsers(); renderCatalog();
+          renderHero(); renderInbox(); renderUsers(); renderCatalog(); renderClients();
           if (!first) revealAll();
         }
         $('refresh').addEventListener('click', function () { loadAll(false); });
@@ -522,7 +548,7 @@
           state.tab = tab;
           store('dash-tab', tab);
           document.querySelectorAll('nav [data-tab]').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === tab)); });
-          ['inbox', 'users', 'catalog'].forEach(function (t) {
+          ['inbox', 'users', 'catalog', 'clients'].forEach(function (t) {
             var el = $('tab-' + t);
             el.hidden = t !== tab;
             if (t === tab && changed && !quiet) { el.style.animation = 'none'; el.offsetHeight; el.style.animation = ''; }
@@ -537,6 +563,7 @@
           if (e.key === '1') selectTab('inbox');
           else if (e.key === '2') selectTab('users');
           else if (e.key === '3') selectTab('catalog');
+          else if (e.key === '4') selectTab('clients');
           else if (e.key === 'r' || e.key === 'R' || e.key === 'ר') loadAll(false);
           else if (e.key === '/' || e.key === '.') { e.preventDefault(); selectTab('catalog'); setTimeout(function () { var f = $('finder'); if (f) f.focus(); }, 50); }
         });
@@ -960,6 +987,129 @@
 
         // ---------- Toast & confetti ----------
         var toastTimer;
+        // ---------- Clients: restaurants and their bar devices ----------
+        // Every restaurant (a client) and the iPads on its bar. A device connects with a one-time
+        // 6-digit code made here: "מכשיר בר" on the iPad's sign-in screen, then the code (10
+        // minutes). Disconnecting deletes the device's sign-in; the iPad goes back to sign-in.
+        var CLIENT_FIELDS = [
+          ['name', 'שם המקום *', 'text'], ['city', 'עיר', 'text'], ['address', 'כתובת', 'text'],
+          ['contact_name', 'איש/אשת קשר', 'text'], ['contact_phone', 'טלפון', 'tel'], ['contact_email', 'אימייל', 'email'],
+          ['notes', 'הערות', 'area']
+        ];
+        var DEVICE_STATUS = { connected: 'מחובר', waiting: 'מחכה לקוד', expired: 'הקוד פג', disconnected: 'נותק' };
+        function clientForm(bar) {
+          bar = bar || {};
+          return '<form class="card" id="client-form"><h2 class="t">' + (bar.id ? 'עריכת ' + esc(bar.name) : 'לקוח חדש') + '</h2><div class="form">' +
+            CLIENT_FIELDS.map(function (f) {
+              var v = esc(bar[f[0]] || '');
+              return '<label' + (f[2] === 'area' ? ' class="wide"' : '') + '>' + f[1] +
+                (f[2] === 'area' ? '<textarea name="' + f[0] + '">' + v + '</textarea>' : '<input name="' + f[0] + '" type="' + f[2] + '" value="' + v + '"' + (f[0] === 'name' ? ' required' : '') + ' />') + '</label>';
+            }).join('') +
+            '</div><input type="hidden" name="id" value="' + esc(bar.id || '') + '" /><div class="actions"><button class="act primary" type="submit">שמירה</button><button class="act" type="button" data-cancel>ביטול</button></div></form>';
+        }
+        function deviceRow(d) {
+          var tag = d.status === 'connected' ? 'tag ok' : d.status === 'waiting' ? 'tag new' : 'tag';
+          var meta = d.status === 'connected'
+            ? (d.last_seen_at ? 'נראה ' + ago(d.last_seen_at) : 'חובר ' + ago(d.connected_at))
+            : d.status === 'disconnected' ? 'נותק ' + ago(d.disconnected_at) : 'נוצר ' + ago(d.created_at);
+          var acts = d.status === 'connected'
+            ? '<button type="button" class="act" data-disconnect="' + d.id + '" data-name="' + esc(d.name) + '">ניתוק</button>'
+            : '<button type="button" class="act primary" data-newcode="' + d.id + '">קוד חדש</button>';
+          var code = state.code && state.code.device_id === d.id && d.status === 'waiting' ? codeBox(state.code) : '';
+          return '<div><div class="device"><span class="dname">📱 ' + esc(d.name) + '</span><span class="' + tag + '">' + DEVICE_STATUS[d.status] + '</span><span class="meta">' + esc(meta) + '</span><span class="actions">' + acts + '</span></div>' + code + '</div>';
+        }
+        function codeBox(c) {
+          return '<div class="codebox"><div class="soft">באייפד: "מכשיר בר" במסך הכניסה, ואז הקוד</div><div class="code num">' + esc(c.code) + '</div><div class="soft" id="code-left">' + codeLeft(c) + '</div></div>';
+        }
+        function codeLeft(c) {
+          var left = Math.max(0, Math.round((new Date(c.expires_at) - Date.now()) / 1000));
+          if (!left) return 'הקוד פג. אפשר ליצור קוד חדש.';
+          return 'בתוקף עוד ' + Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0') + ' · לשימוש פעם אחת';
+        }
+        setInterval(function () {
+          var el = $('code-left');
+          if (el && state.code) el.textContent = codeLeft(state.code);
+        }, 1000);
+        function clientCard(b) {
+          var contact = [];
+          if (b.city || b.address) contact.push('📍 ' + esc([b.address, b.city].filter(Boolean).join(', ')));
+          if (b.contact_name) contact.push('👤 ' + esc(b.contact_name));
+          if (b.contact_phone) contact.push('📞 <a href="tel:' + esc(b.contact_phone) + '">' + esc(b.contact_phone) + '</a>');
+          if (b.contact_email) contact.push('✉️ <a href="mailto:' + esc(b.contact_email) + '">' + esc(b.contact_email) + '</a>');
+          return '<section class="card client"><div class="head"><span class="name">' + esc(b.name) + '</span><span class="actions" style="margin:0">' +
+            '<button type="button" class="act" data-edit="' + b.id + '">עריכה</button><button type="button" class="act" data-delete="' + b.id + '" data-name="' + esc(b.name) + '">מחיקה</button></span></div>' +
+            (contact.length ? '<div class="info">' + contact.map(function (c) { return '<span>' + c + '</span>'; }).join('') + '</div>' : '') +
+            (b.notes ? '<div class="notes">' + esc(b.notes) + '</div>' : '') +
+            '<div class="muted" style="font-size:13px;margin-top:4px">לקוח מ-' + esc(when(b.created_at)) + '</div>' +
+            '<div class="devices">' + b.devices.map(deviceRow).join('') +
+            '<form class="newdevice" data-bar="' + b.id + '"><input name="device" placeholder="שם המכשיר (בר ראשי…)" maxlength="60" required /><button class="act primary" type="submit">+ מכשיר</button></form></div></section>';
+        }
+        function renderClients(force) {
+          var root = $('tab-clients');
+          if (!state.bars) { root.innerHTML = '<section class="card"><div class="soft">טוען…</div></section>'; return; }
+          // The minute's refresh doesn't wipe a form being filled in, or a code on the screen.
+          if (!force && (state.editing || (state.code && new Date(state.code.expires_at) > Date.now()) ||
+            (root.contains(document.activeElement) && /INPUT|TEXTAREA/.test(document.activeElement.tagName)))) return;
+          var connected = state.bars.reduce(function (s, b) { return s + b.devices.filter(function (d) { return d.status === 'connected'; }).length; }, 0);
+          var html = '<div class="grid tiles">' + tile(state.bars.length, 'לקוחות') + tile(connected, 'מכשירים מחוברים') + '</div>';
+          html += state.editing ? clientForm(state.editing === 'new' ? null : state.bars.find(function (b) { return b.id === state.editing; })) :
+            '<div class="actions" style="margin:16px 0"><button type="button" class="act primary" data-newclient>+ לקוח חדש</button></div>';
+          html += state.bars.length ? '<div class="grid">' + state.bars.map(clientCard).join('') + '</div>' :
+            (state.editing ? '' : '<section class="card"><div class="empty">עוד אין לקוחות. "לקוח חדש" כדי לרשום מסעדה.</div></section>');
+          root.innerHTML = html;
+          countUp(root, true);
+          revealAll();
+        }
+        async function reloadBars() {
+          var r = await sb.rpc('admin_bars');
+          if (r.error) { toast('שגיאה: ' + r.error.message); return; }
+          state.bars = r.data;
+          renderClients(true);
+        }
+        $('tab-clients').addEventListener('click', async function (e) {
+          var b = e.target.closest('button');
+          if (!b || b.type === 'submit') return;
+          if (b.hasAttribute('data-newclient')) { state.editing = 'new'; renderClients(true); var f = document.querySelector('#client-form input[name=name]'); if (f) f.focus(); return; }
+          if (b.hasAttribute('data-cancel')) { state.editing = null; renderClients(true); return; }
+          if (b.dataset.edit) { state.editing = b.dataset.edit; renderClients(true); return; }
+          if (b.dataset.delete) {
+            if (!confirm('למחוק את "' + b.dataset.name + '"? כל המכשירים שלו יתנתקו. אי אפשר לבטל.')) return;
+            var d = await sb.rpc('admin_delete_bar', { bar_id: b.dataset.delete });
+            if (d.error) { toast('שגיאה: ' + d.error.message); return; }
+            toast('נמחק'); await reloadBars(); return;
+          }
+          if (b.dataset.disconnect) {
+            if (!confirm('לנתק את "' + b.dataset.name + '"? המכשיר יחזור למסך הכניסה, ויתחבר שוב רק עם קוד חדש.')) return;
+            var x = await sb.rpc('admin_disconnect_bar_device', { device_id: b.dataset.disconnect });
+            if (x.error) { toast('שגיאה: ' + x.error.message); return; }
+            toast('המכשיר נותק'); await reloadBars(); return;
+          }
+          if (b.dataset.newcode) {
+            var c = await sb.rpc('admin_bar_device_code', { device_id: b.dataset.newcode });
+            if (c.error) { toast('שגיאה: ' + c.error.message); return; }
+            state.code = c.data; await reloadBars(); return;
+          }
+        });
+        $('tab-clients').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          var form = e.target;
+          if (form.id === 'client-form') {
+            var bar = {};
+            new FormData(form).forEach(function (v, k) { bar[k] = String(v); });
+            if (!bar.name.trim()) return;
+            var r = await sb.rpc('admin_save_bar', { bar: bar });
+            if (r.error) { toast('שגיאה: ' + r.error.message); return; }
+            toast(bar.id ? 'נשמר' : 'הלקוח נרשם'); state.editing = null; await reloadBars(); return;
+          }
+          if (form.classList.contains('newdevice')) {
+            var name = form.elements.device.value.trim();
+            if (!name) return;
+            var d = await sb.rpc('admin_new_bar_device', { bar_id: form.dataset.bar, device_name: name });
+            if (d.error) { toast('שגיאה: ' + d.error.message); return; }
+            state.code = d.data; await reloadBars();
+          }
+        });
+
         function toast(text) {
           var t = $('toast');
           t.textContent = text;
