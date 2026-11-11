@@ -1045,9 +1045,28 @@
             '<button type="button" class="act" data-edit="' + b.id + '">עריכה</button><button type="button" class="act" data-delete="' + b.id + '" data-name="' + esc(b.name) + '">מחיקה</button></span></div>' +
             (contact.length ? '<div class="info">' + contact.map(function (c) { return '<span>' + c + '</span>'; }).join('') + '</div>' : '') +
             (b.notes ? '<div class="notes">' + esc(b.notes) + '</div>' : '') +
-            '<div class="muted" style="font-size:13px;margin-top:4px">לקוח מ-' + esc(when(b.created_at)) + '</div>' + demo +
+            '<div class="muted" style="font-size:13px;margin-top:4px">לקוח מ-' + esc(when(b.created_at)) + '</div>' + demo + managerBlock(b) +
             '<div class="devices">' + b.devices.map(deviceRow).join('') +
             '<form class="newdevice" data-bar="' + b.id + '"><input name="device" placeholder="שם המכשיר (בר ראשי…)" maxlength="60" required /><button class="act primary" type="submit">+ מכשיר</button></form></div></section>';
+        }
+        // The bar's manager (the manager portal, barmenti.com/manage): who it is, or an invite to send.
+        var PORTAL_URL = 'https://barmenti.com/manage/';
+        function managerBlock(b) {
+          var invite = state.managerInvite && state.managerInvite.bar === b.id ? state.managerInvite : null;
+          var line = b.manager
+            ? '👔 מנהל: ' + esc(b.manager.name || 'מחובר') + ' · מאז ' + esc(when(b.manager.since))
+            : '👔 אין מנהל עדיין';
+          if (!invite && b.manager_invite_expires_at) line += ' · הזמנה פתוחה עד ' + esc(when(b.manager_invite_expires_at));
+          var buttons = '<button type="button" class="act" data-invitemanager="' + b.id + '" data-name="' + esc(b.name) + '" data-hasmanager="' + (b.manager ? '1' : '') + '">' +
+            (b.manager ? 'החלפת מנהל' : 'הזמנת מנהל') + '</button>' +
+            (b.manager ? '<button type="button" class="act" data-removemanager="' + b.id + '" data-name="' + esc(b.name) + '">הסרת המנהל</button>' : '');
+          var box = invite
+            ? '<div class="codebox"><div class="soft">שלחו למנהל: נכנסים ל-' + esc(PORTAL_URL) + ', מתחברים, ומזינים את הקוד (פעם אחת, תקף לשבוע)</div>' +
+              '<div class="code num">' + esc(invite.code) + '</div>' +
+              '<div class="actions" style="justify-content:center"><button type="button" class="act" data-copyinvite="' + esc(PORTAL_URL + '?invite=' + invite.code) + '">העתקת קישור עם הקוד</button>' +
+              '<button type="button" class="act" data-closeinvite>סגירה</button></div></div>'
+            : '';
+          return '<div class="info" style="margin-top:8px"><span>' + line + '</span></div><div class="actions">' + buttons + '</div>' + box;
         }
         function renderClients(force) {
           var root = $('tab-clients');
@@ -1102,6 +1121,24 @@
             if (z.error) { toast('שגיאה: ' + z.error.message); return; }
             toast('הקוד בוטל'); await reloadBars(); return;
           }
+          if (b.dataset.invitemanager) {
+            if (b.dataset.hasmanager && !confirm('להחליף את המנהל של "' + b.dataset.name + '"? מי שישתמש בקוד החדש יהיה המנהל במקומו.')) return;
+            var mi = await sb.rpc('admin_manager_invite', { bar_id: b.dataset.invitemanager });
+            if (mi.error) { toast('שגיאה: ' + mi.error.message); return; }
+            state.managerInvite = { bar: b.dataset.invitemanager, code: mi.data }; await reloadBars(); return;
+          }
+          if (b.dataset.removemanager) {
+            if (!confirm('להסיר את המנהל של "' + b.dataset.name + '"? הוא לא יוכל לערוך את הבר בפורטל.')) return;
+            var rm = await sb.rpc('admin_remove_manager', { bar_id: b.dataset.removemanager });
+            if (rm.error) { toast('שגיאה: ' + rm.error.message); return; }
+            toast('המנהל הוסר'); await reloadBars(); return;
+          }
+          if (b.hasAttribute('data-copyinvite')) {
+            try { await navigator.clipboard.writeText(b.dataset.copyinvite); toast('הקישור הועתק'); }
+            catch (err) { prompt('העתיקו את הקישור:', b.dataset.copyinvite); }
+            return;
+          }
+          if (b.hasAttribute('data-closeinvite')) { state.managerInvite = null; renderClients(true); return; }
           if (b.dataset.newcode) {
             var c = await sb.rpc('admin_bar_device_code', { device_id: b.dataset.newcode });
             if (c.error) { toast('שגיאה: ' + c.error.message); return; }
