@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&family=Karantina:wght@700&display=swap" />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
     <style>
       :root {
         --bar: #17120f;
@@ -173,6 +173,7 @@
       .actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
       .act { background: var(--card-2); border: 1px solid var(--edge-strong); border-radius: 999px; padding: 4px 14px; font-size: 14px; color: var(--soft); transition: all 0.2s; }
       .act:hover { color: var(--cream); border-color: var(--soft); }
+      a.act { text-decoration: none; display: inline-block; }
       .act.primary { background: var(--brass); border-color: var(--brass); color: #fff; }
       .item.done { opacity: 0.55; }
       .zero { text-align: center; padding: 30px 10px; }
@@ -299,6 +300,20 @@
       /* Toast + confetti */
       .toast { position: fixed; bottom: 22px; left: 50%; transform: translate(-50%, 30px); opacity: 0; z-index: 70; background: var(--cream); color: var(--bar); border-radius: 999px; padding: 10px 20px; font-weight: 800; box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6); transition: all 0.45s var(--ease); white-space: nowrap; }
       .toast.show { opacity: 1; transform: translate(-50%, 0); }
+      /* A question over a dimmed page, instead of the browser's own box. */
+      .ask { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 20px; background: rgba(5, 3, 2, 0.62); backdrop-filter: blur(6px); animation: fadein 0.2s both; }
+      .ask[hidden] { display: none; }
+      .ask .box { width: min(460px, 100%); padding: 26px; border-radius: 24px; background: linear-gradient(180deg, var(--card-2), var(--card)); border: 1px solid var(--edge-strong); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7); animation: popin 0.25s var(--ease) both; }
+      .ask h3 { margin: 0 0 8px; font-size: 21px; }
+      .ask p { margin: 0; color: var(--soft); }
+      .ask .row { display: flex; gap: 10px; margin-top: 22px; }
+      .ask button { border-radius: 999px; padding: 10px 20px; font-weight: 800; border: 1px solid var(--edge-strong); background: none; color: var(--soft); }
+      .ask button.go { background: var(--brass); border-color: var(--brass); color: #fff; }
+      @keyframes fadein { from { opacity: 0; } }
+      @keyframes popin { from { opacity: 0; transform: scale(0.95); } }
+      .livedot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--brass); margin-inline-end: 4px; animation: ping-brass 2s infinite; }
+      @keyframes ping-brass { 0% { box-shadow: 0 0 0 0 rgba(217, 87, 75, 0.55); } 80%, 100% { box-shadow: 0 0 0 8px rgba(217, 87, 75, 0); } }
+      @media (prefers-reduced-motion: reduce) { .ask, .ask .box, .livedot { animation: none; } }
       canvas#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 65; }
       .keys { color: var(--muted); font-size: 13px; text-align: center; margin-top: 40px; }
       .keys kbd { font: 600 12px 'Assistant'; border: 1px solid var(--edge-strong); border-radius: 5px; padding: 0 6px; margin: 0 2px; }
@@ -382,6 +397,11 @@
     </div>
     <div id="tip" class="tip" hidden></div>
     <div id="toast" class="toast"></div>
+    <div id="ask" class="ask" hidden role="alertdialog" aria-modal="true" aria-labelledby="ask-title">
+      <div class="box"><h3 id="ask-title"></h3><p id="ask-body"></p>
+        <div class="row"><button type="button" class="go" id="ask-yes"></button><button type="button" id="ask-no">ביטול</button></div>
+      </div>
+    </div>
     <canvas id="confetti"></canvas>
 
     <script>
@@ -1009,6 +1029,8 @@
         }
         function deviceRow(d) {
           var tag = d.status === 'connected' ? 'tag ok' : d.status === 'waiting' ? 'tag new' : 'tag';
+          // It checks in every minute while open: seen in the last 3 minutes is on the bar now.
+          var live = d.status === 'connected' && d.last_seen_at && Date.now() - new Date(d.last_seen_at) < 180000;
           var meta = d.status === 'connected'
             ? (d.last_seen_at ? 'נראה ' + ago(d.last_seen_at) : 'חובר ' + ago(d.connected_at))
             : d.status === 'disconnected' ? 'נותק ' + ago(d.disconnected_at) : 'נוצר ' + ago(d.created_at);
@@ -1016,7 +1038,7 @@
             ? '<button type="button" class="act" data-disconnect="' + d.id + '" data-name="' + esc(d.name) + '">ניתוק</button>'
             : '<button type="button" class="act primary" data-newcode="' + d.id + '">קוד חדש</button>';
           var code = state.code && state.code.device_id === d.id && d.status === 'waiting' ? codeBox(state.code) : '';
-          return '<div><div class="device"><span class="dname">📱 ' + esc(d.name) + '</span><span class="' + tag + '">' + DEVICE_STATUS[d.status] + '</span><span class="meta">' + esc(meta) + '</span><span class="actions">' + acts + '</span></div>' + code + '</div>';
+          return '<div><div class="device"><span class="dname">📱 ' + esc(d.name) + '</span><span class="' + tag + '">' + (live ? '<i class="livedot"></i>פעיל עכשיו' : DEVICE_STATUS[d.status]) + '</span><span class="meta">' + esc(meta) + '</span><span class="actions">' + acts + '</span></div>' + code + '</div>';
         }
         function codeBox(c) {
           return '<div class="codebox"><div class="soft">באייפד: "מכשיר בר" במסך הכניסה, ואז הקוד</div><div class="code num">' + esc(c.code) + '</div><div class="soft" id="code-left">' + codeLeft(c) + '</div></div>';
@@ -1042,10 +1064,11 @@
             : '';
           return '<section class="card client"><div class="head"><span class="name">' + esc(b.name) + (b.is_demo ? ' <span class="tag new">לבודקים</span>' : '') + '</span><span class="actions" style="margin:0">' +
             (b.is_demo ? '' : '<button type="button" class="act" data-demo="' + b.id + '" data-name="' + esc(b.name) + '">קוד קבוע לבודקים</button>') +
+            '<a class="act" href="' + esc(PORTAL_URL + '?bar=' + b.id) + '" target="_blank" rel="noopener">פתיחה בפורטל ↗</a>' +
             '<button type="button" class="act" data-edit="' + b.id + '">עריכה</button><button type="button" class="act" data-delete="' + b.id + '" data-name="' + esc(b.name) + '">מחיקה</button></span></div>' +
             (contact.length ? '<div class="info">' + contact.map(function (c) { return '<span>' + c + '</span>'; }).join('') + '</div>' : '') +
             (b.notes ? '<div class="notes">' + esc(b.notes) + '</div>' : '') +
-            '<div class="muted" style="font-size:13px;margin-top:4px">לקוח מ-' + esc(when(b.created_at)) + '</div>' + demo + managerBlock(b) +
+            '<div class="muted" style="font-size:13px;margin-top:4px">לקוח מ-' + esc(when(b.created_at)) + ' · 👥 ' + (b.members ? b.members + ' בצוות' : 'עוד אין צוות') + '</div>' + demo + managerBlock(b) +
             '<div class="devices">' + b.devices.map(deviceRow).join('') +
             '<form class="newdevice" data-bar="' + b.id + '"><input name="device" placeholder="שם המכשיר (בר ראשי…)" maxlength="60" required /><button class="act primary" type="submit">+ מכשיר</button></form></div></section>';
         }
@@ -1098,37 +1121,37 @@
           if (b.hasAttribute('data-cancel')) { state.editing = null; renderClients(true); return; }
           if (b.dataset.edit) { state.editing = b.dataset.edit; renderClients(true); return; }
           if (b.dataset.delete) {
-            if (!confirm('למחוק את "' + b.dataset.name + '"? כל המכשירים שלו יתנתקו. אי אפשר לבטל.')) return;
+            if (!(await ask('למחוק את "' + b.dataset.name + '"?', 'כל המכשירים שלו יתנתקו, והצוות יאבד את הבר. אי אפשר לבטל.', 'מחיקה'))) return;
             var d = await sb.rpc('admin_delete_bar', { bar_id: b.dataset.delete });
             if (d.error) { toast('שגיאה: ' + d.error.message); return; }
             toast('נמחק'); await reloadBars(); return;
           }
           if (b.dataset.disconnect) {
-            if (!confirm('לנתק את "' + b.dataset.name + '"? המכשיר יחזור למסך הכניסה, ויתחבר שוב רק עם קוד חדש.')) return;
+            if (!(await ask('לנתק את "' + b.dataset.name + '"?', 'המכשיר יחזור למסך הכניסה, ויתחבר שוב רק עם קוד חדש.', 'ניתוק'))) return;
             var x = await sb.rpc('admin_disconnect_bar_device', { device_id: b.dataset.disconnect });
             if (x.error) { toast('שגיאה: ' + x.error.message); return; }
             toast('המכשיר נותק'); await reloadBars(); return;
           }
           if (b.dataset.demo) {
-            if (!confirm('להפוך את "' + b.dataset.name + '" לבר לדוגמה לבודקי App Review? הקוד הקבוע מחבר אליו מכשיר חדש בכל שימוש, אז רק לבר בלי נתונים של מסעדה אמיתית.')) return;
+            if (!(await ask('להפוך את "' + b.dataset.name + '" לבר לדוגמה?', 'לבודקי App Review: הקוד הקבוע מחבר אליו מכשיר חדש בכל שימוש, אז רק לבר בלי נתונים של מסעדה אמיתית.', 'קוד קבוע'))) return;
             var m = await sb.rpc('admin_bar_demo_code', { bar_id: b.dataset.demo });
             if (m.error) { toast('שגיאה: ' + m.error.message); return; }
             toast('קוד קבוע: ' + m.data); await reloadBars(); return;
           }
           if (b.dataset.cleardemo) {
-            if (!confirm('לבטל את הקוד הקבוע? הבודקים לא יוכלו להתחבר איתו.')) return;
+            if (!(await ask('לבטל את הקוד הקבוע?', 'הבודקים לא יוכלו להתחבר איתו.', 'ביטול הקוד'))) return;
             var z = await sb.rpc('admin_clear_bar_demo_code', { bar_id: b.dataset.cleardemo });
             if (z.error) { toast('שגיאה: ' + z.error.message); return; }
             toast('הקוד בוטל'); await reloadBars(); return;
           }
           if (b.dataset.invitemanager) {
-            if (b.dataset.hasmanager && !confirm('להחליף את המנהל של "' + b.dataset.name + '"? מי שישתמש בקוד החדש יהיה המנהל במקומו.')) return;
+            if (b.dataset.hasmanager && !(await ask('להחליף את המנהל של "' + b.dataset.name + '"?', 'מי שישתמש בקוד החדש יהיה המנהל במקומו.', 'קוד חדש'))) return;
             var mi = await sb.rpc('admin_manager_invite', { bar_id: b.dataset.invitemanager });
             if (mi.error) { toast('שגיאה: ' + mi.error.message); return; }
             state.managerInvite = { bar: b.dataset.invitemanager, code: mi.data }; await reloadBars(); return;
           }
           if (b.dataset.removemanager) {
-            if (!confirm('להסיר את המנהל של "' + b.dataset.name + '"? הוא לא יוכל לערוך את הבר בפורטל.')) return;
+            if (!(await ask('להסיר את המנהל של "' + b.dataset.name + '"?', 'הוא לא יוכל לנהל את הבר בפורטל.', 'הסרה'))) return;
             var rm = await sb.rpc('admin_remove_manager', { bar_id: b.dataset.removemanager });
             if (rm.error) { toast('שגיאה: ' + rm.error.message); return; }
             toast('המנהל הוסר'); await reloadBars(); return;
@@ -1166,6 +1189,27 @@
           }
         });
 
+        function ask(title, body, yes) {
+          return new Promise(function (resolve) {
+            var box = $('ask');
+            $('ask-title').textContent = title;
+            $('ask-body').textContent = body || '';
+            $('ask-yes').textContent = yes || 'אישור';
+            box.hidden = false;
+            $('ask-no').focus();
+            function done(ok) {
+              box.hidden = true;
+              $('ask-yes').onclick = $('ask-no').onclick = box.onmousedown = null;
+              document.removeEventListener('keydown', key);
+              resolve(ok);
+            }
+            function key(e) { if (e.key === 'Escape') done(false); }
+            $('ask-yes').onclick = function () { done(true); };
+            $('ask-no').onclick = function () { done(false); };
+            box.onmousedown = function (e) { if (e.target === box) done(false); };
+            document.addEventListener('keydown', key);
+          });
+        }
         function toast(text) {
           var t = $('toast');
           t.textContent = text;
