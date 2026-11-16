@@ -876,7 +876,7 @@
           var html = '<section class="reveal">' + head + '<div class="grid three">';
           html += '<div class="card src"><div class="k">הורדות</div><div class="n">' + n(ins.total) + '</div>' +
             '<div class="soft" style="font-size:14px;margin-bottom:6px">' + Object.keys(ins.platforms).sort(function (a, b) { return ins.platforms[b] - ins.platforms[a]; }).map(function (k) { return esc(k) + ' <b>' + ins.platforms[k] + '</b>'; }).join(' · ') + '</div>' +
-            '<div class="w"><b>PostHog</b>, האירוע <code>Application Installed</code>: הפעם הראשונה שהאפליקציה מהחנות נפתחת במכשיר, עוד לפני הרשמה. נאסף מ־' + esc(ins.since ? new Date(ins.since).toLocaleDateString('he-IL') : '?') + '. התקנה מחדש נספרת שוב; מי שהוריד ולא פתח לא נספר.</div></div>';
+            '<div class="w"><b>PostHog</b>, האירוע <code>Application Installed</code>: הפעם הראשונה שהאפליקציה מהחנות נפתחת במכשיר, עוד לפני הרשמה. נאסף מ־' + esc(ins.since ? new Date(ins.since).toLocaleDateString('he-IL') : '?') + '. התקנה מחדש נספרת שוב; מי שהוריד ולא פתח לא נספר. בלי הבודקים של אפל וגוגל (התקנות מארה״ב: האפליקציה נמכרת רק בישראל).</div></div>';
           html += signups;
           html += '<div class="card src"><div class="k">מי שהוריד, נרשם?</div><div class="n">' + n(rate) + '<span style="font-size:24px">%</span></div>' +
             '<div class="w">נרשמים חלקי הורדות. ' + (ins.total > u.total ? '<b>' + (ins.total - u.total) + '</b> הורידו ולא נרשמו (בערך).' : '') + ' השבוע: ' + ins.last_7_days + ' הורדות, ' + u.last_7_days + ' נרשמים.</div></div>';
@@ -887,8 +887,31 @@
           html += '<div class="grid two" style="margin-top:16px">' +
             '<div class="card"><h2 class="t">הורדות ביום <small>PostHog</small></h2>' + columns(dl, 'הורדות', top) + '</div>' +
             '<div class="card"><h2 class="t">נרשמים ביום <small>Supabase · אותו קנה מידה</small></h2>' + columns(u.by_day, 'נרשמו', top) + '</div></div>';
+          html += funnelSection(ins.funnel);
           html += '<div class="w muted" style="margin-top:10px;font-size:13px">המספרים הרשמיים של החנויות (כולל מי שהוריד ולא פתח): App Store Connect → Analytics → First-Time Downloads, ו־Play Console → סטטיסטיקה.</div>';
           return html + '</section>';
+        }
+
+        // Where people who installed stop before getting in (PostHog, people not devices).
+        function funnelSection(f) {
+          if (!f || !f.people) return '';
+          var steps = [
+            ['פתחו את האפליקציה', f.people],
+            ['ראו את סצנת הפתיחה', f.welcome],
+            ['המשיכו למסך היכולות', f.scene],
+            ['המשיכו להרשמה', f.features],
+            ['ראו את מסך ההרשמה', f.sign_up],
+            ['נכנסו לאפליקציה', f.signed_in],
+          ];
+          var rows = steps.map(function (s, i) {
+            var lost = i > 0 ? Math.max(0, steps[i - 1][1] - s[1]) : 0;
+            return '<div class="bar"><span>' + esc(s[0]) + '</span><span class="track"><i style="width:' + (s[1] / f.people) * 100 + '%;animation-delay:' + i * 60 + 'ms"></i></span><span class="v">' + s[1] + (lost ? ' <small style="color:var(--danger, #e06b5a)">−' + lost + '</small>' : '') + '</span></div>';
+          }).join('');
+          var left = Math.max(0, f.sign_up - f.signed_in);
+          var rate = f.sign_up ? Math.round((left / f.sign_up) * 100) : 0;
+          return '<section class="card reveal" style="margin-top:16px"><h2 class="t">איפה עוצרים בדרך פנימה <small>PostHog · אנשים שהתקינו, בלי הבודקים</small></h2>' +
+            '<div class="bars" style="grid-template-columns:1fr">' + rows + '</div>' +
+            '<div class="w" style="margin-top:12px">מתוך מי שראו את מסך ההרשמה, <b>' + left + '</b> לא נכנסו (' + rate + '%). מתוך מי שנכנסו, ' + f.new_accounts + ' פתחו חשבון חדש ו־' + Math.max(0, f.signed_in - f.new_accounts) + ' התחברו לחשבון קיים.</div></section>';
         }
 
         // ---------- The bar (catalog) ----------
