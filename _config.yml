@@ -12,5 +12,8 @@ baseurl: ""
 contact_email: oriamram111@gmail.com
 
 markdown: kramdown
+# Jekyll skips folders that start with a dot; this one tells phones which links open the app.
+include:
+  - .well-known
 exclude:
   - README.md

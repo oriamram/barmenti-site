@@ -1,0 +1,8 @@
+# Everything public here may be crawled, by search engines and by AI assistants alike
+# (GPTBot, ClaudeBot, PerplexityBot, Google-Extended and the rest): the recipes are meant to be
+# found and quoted. The owner's dashboard and the managers' portal ask not to be indexed on
+# their own pages.
+User-agent: *
+Allow: /
+
+Sitemap: https://barmenti.com/sitemap.xml

@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["7JD2BSPQ6H.com.barmenti.app"],
+        "components": [
+          { "/": "/cocktail/*", "comment": "A cocktail's page opens in the app" },
+          { "/": "/join*", "comment": "Joining a bar's team" }
+        ]
+      }
+    ]
+  }
+}
