@@ -1,0 +1,23 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.barmenti.app",
+      "sha256_cert_fingerprints": [
+        "D6:32:32:C5:39:AB:17:63:D3:2B:6C:90:2B:87:E6:29:79:3F:3B:25:90:AE:A1:9F:71:BB:E3:79:FF:07:68:EB",
+        "D2:B7:7B:C4:B0:A3:64:51:58:61:35:D1:7C:57:50:19:02:58:89:E9:38:80:DC:83:6F:26:8F:11:67:B7:61:4E"
+      ]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.barmenti.app.dev",
+      "sha256_cert_fingerprints": [
+        "F8:04:83:16:D7:1A:C8:2A:C4:0E:DD:70:28:FF:25:95:9F:B9:29:6D:45:30:3C:C3:5F:A9:E8:A3:A0:46:11:07"
+      ]
+    }
+  }
+]
