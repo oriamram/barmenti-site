@@ -297,6 +297,40 @@
       .codebox .code { font-size: 46px; font-weight: 800; letter-spacing: 0.25em; direction: ltr; font-variant-numeric: tabular-nums; }
       .codebox .soft { font-size: 14px; }
 
+      /* Bottles: the shelf database (admin_bottles). */
+      .bottles { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
+      .bottle { background: var(--card-2); border: 1px solid var(--edge); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+      .bottle.fresh { border-color: rgba(94, 196, 178, 0.45); }
+      .bottle .top { display: flex; align-items: baseline; gap: 8px; }
+      .bottle .nm { font-weight: 800; font-size: 17px; line-height: 1.2; flex: 1; min-width: 0; }
+      .bottle .lvl { color: var(--gold); font-weight: 800; letter-spacing: 1px; font-size: 14px; }
+      .bottle .lvl s { color: var(--card-3); text-decoration: none; }
+      .bottle .en { color: var(--muted); font-size: 12px; direction: ltr; text-align: end; }
+      .bottle .facts { display: flex; flex-wrap: wrap; gap: 2px 10px; color: var(--soft); font-size: 13px; }
+      .bottle .ok { color: var(--good); }
+      .bottle .unk { color: var(--muted); }
+      .bottle .desc { font-size: 14px; color: var(--cream); }
+      .bottle .marks { display: flex; flex-wrap: wrap; gap: 5px; }
+      .bottle .marks span { font-size: 12px; border-radius: 999px; padding: 0 9px; background: var(--card-3); color: var(--soft); }
+      .bottle .marks .yes { background: rgba(127, 183, 126, 0.16); color: var(--good); }
+      .bottle .marks .warn { background: var(--brass-soft); color: #f0a49c; }
+      .bottle details { margin-top: 2px; font-size: 13px; color: var(--soft); }
+      .bottle summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+      .bottle summary:hover { color: var(--cream); }
+      .bottle details ul { margin: 6px 0 0; padding-inline-start: 18px; }
+      .bottle details li + li { margin-top: 3px; }
+      .bottle details a { color: var(--cream); text-decoration: none; border-bottom: 1px dotted var(--muted); overflow-wrap: anywhere; }
+      .bottle details .k { color: var(--gold); font-weight: 600; }
+      .chip .c { color: var(--muted); font-size: 12px; margin-inline-start: 5px; }
+      .chip[aria-pressed='true'] .c { color: var(--bar); opacity: 0.6; }
+      .more { display: block; margin: 14px auto 0; }
+      .gaps .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 7px 0; border-top: 1px solid var(--edge); }
+      .gaps .row:first-of-type { border-top: 0; }
+      .gaps button.row { width: 100%; background: none; border-inline: 0; border-bottom: 0; color: inherit; text-align: start; }
+      .gaps button.row:hover span:first-child { color: var(--cream); }
+      .gaps .row span:first-child { color: var(--soft); }
+      .gaps .row b { font-variant-numeric: tabular-nums; }
+
       /* Toast + confetti */
       .toast { position: fixed; bottom: 22px; left: 50%; transform: translate(-50%, 30px); opacity: 0; z-index: 70; background: var(--cream); color: var(--bar); border-radius: 999px; padding: 10px 20px; font-weight: 800; box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6); transition: all 0.45s var(--ease); white-space: nowrap; }
       .toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -385,14 +419,16 @@
           <button role="tab" data-tab="users" aria-selected="false">אנשים<kbd>2</kbd></button>
           <button role="tab" data-tab="catalog" aria-selected="false">הבר<kbd>3</kbd></button>
           <button role="tab" data-tab="clients" aria-selected="false">לקוחות<kbd>4</kbd></button>
+          <button role="tab" data-tab="bottles" aria-selected="false">בקבוקים<kbd>5</kbd></button>
         </nav>
 
         <div id="tab-inbox" class="tabpanel" role="tabpanel"></div>
         <div id="tab-users" class="tabpanel" role="tabpanel" hidden></div>
         <div id="tab-catalog" class="tabpanel" role="tabpanel" hidden></div>
         <div id="tab-clients" class="tabpanel" role="tabpanel" hidden></div>
+        <div id="tab-bottles" class="tabpanel" role="tabpanel" hidden></div>
 
-        <div class="keys"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> לשוניות · <kbd>R</kbd> רענון · <kbd>/</kbd> חיפוש קוקטייל</div>
+        <div class="keys"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd><kbd>5</kbd> לשוניות · <kbd>R</kbd> רענון · <kbd>/</kbd> חיפוש קוקטייל</div>
       </div>
     </div>
     <div id="tip" class="tip" hidden></div>
@@ -515,7 +551,7 @@
         async function loadAll(first) {
           var btn = $('refresh');
           btn.classList.add('spin');
-          var r = await Promise.all([sb.rpc('admin_inbox'), sb.rpc('admin_users'), sb.rpc('admin_catalog'), loadInstalls(), sb.rpc('admin_bars')]);
+          var r = await Promise.all([sb.rpc('admin_inbox'), sb.rpc('admin_users'), sb.rpc('admin_catalog'), loadInstalls(), sb.rpc('admin_bars'), sb.rpc('admin_bottles')]);
           btn.classList.remove('spin');
           // Downloads (r[3]) may fail on their own; their card says why. The rest must load.
           var bad = r.slice(0, 3).find(function (x) { return x.error; });
@@ -527,9 +563,11 @@
           var before = state.users;
           state.inbox = r[0].data; state.users = r[1].data; state.catalog = r[2].data; state.installs = r[3];
           if (!r[4].error) state.bars = r[4].data;
+          state.bottlesError = r[5].error ? r[5].error.message : null;
+          if (!r[5].error) state.bottles = r[5].data;
           $('updated').textContent = 'חי · ' + new Intl.DateTimeFormat('he-IL', { hour: '2-digit', minute: '2-digit' }).format(new Date());
           celebrateNewMembers(before, first);
-          renderHero(); renderInbox(); renderUsers(); renderCatalog(); renderClients();
+          renderHero(); renderInbox(); renderUsers(); renderCatalog(); renderClients(); renderBottles();
           if (!first) revealAll();
         }
         $('refresh').addEventListener('click', function () { loadAll(false); });
@@ -568,7 +606,7 @@
           state.tab = tab;
           store('dash-tab', tab);
           document.querySelectorAll('nav [data-tab]').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === tab)); });
-          ['inbox', 'users', 'catalog', 'clients'].forEach(function (t) {
+          ['inbox', 'users', 'catalog', 'clients', 'bottles'].forEach(function (t) {
             var el = $('tab-' + t);
             el.hidden = t !== tab;
             if (t === tab && changed && !quiet) { el.style.animation = 'none'; el.offsetHeight; el.style.animation = ''; }
@@ -584,6 +622,7 @@
           else if (e.key === '2') selectTab('users');
           else if (e.key === '3') selectTab('catalog');
           else if (e.key === '4') selectTab('clients');
+          else if (e.key === '5') selectTab('bottles');
           else if (e.key === 'r' || e.key === 'R' || e.key === 'ר') loadAll(false);
           else if (e.key === '/' || e.key === '.') { e.preventDefault(); selectTab('catalog'); setTimeout(function () { var f = $('finder'); if (f) f.focus(); }, 50); }
         });
@@ -1010,6 +1049,191 @@
             '<span>' + esc(state.catalog.glasses[x.glass] || x.glass) + '</span><span>' + esc(state.catalog.methods[x.method] || x.method) + '</span>' + (base ? '<span>' + esc(base) + '</span>' : '') + '<span>' + x.ingredients + ' מרכיבים</span></div></div></div>';
         }
         $('tab-catalog').addEventListener('input', function (e) { if (e.target.id === 'finder') { state.query = e.target.value; renderFound(); } });
+
+        // ---------- Bottles ----------
+        // The shelf database (Supabase `bottles`, read by `admin_bottles`): every bottle under its
+        // type in the ingredient tree. Kosher and gluten free are "yes" only where a page said so
+        // about that bottle; anything else is unknown, never "no" (AGENTS.md).
+        var BOTTLE_PAGE = 60;
+        var FLAVOR = { vanilla: 'וניל', caramel: 'קרמל', smoky: 'עשן', honey: 'דבש', fruity: 'פירות', nutty: 'אגוזים', spicy: 'תבלינים', citrus: 'הדרים', anise: 'אניס' };
+        var ALLERGEN = { gluten: 'גלוטן', milk: 'חלב', egg: 'ביצים', nuts: 'אגוזים', peanuts: 'בוטנים', soy: 'סויה', sesame: 'שומשום', sulfites: 'סולפיטים', fish: 'דגים', celery: 'סלרי' };
+        // Families with no types of their own (a tonic, a syrup) are counted together by kind.
+        var KIND = { soda: 'מיקסרים', syrup: 'סירופים', bitters: 'ביטרס', juice: 'מיצים', other: 'אחר' };
+        var GAPS = {
+          abv: ['חוזק לא אומת מול דף', function (b) { return !b.details.abv_source; }],
+          kosher: ['כשרות לא ידועה', function (b) { return b.kosher !== 'yes'; }],
+          importer: ['יבואן לא ידוע', function (b) { return !b.importer; }],
+          price: ['מחיר לא נמצא', function (b) { return b.details.price_found_ils == null; }],
+          country: ['ארץ לא ידועה', function (b) { return !b.country; }],
+        };
+        var regionName = (function () {
+          try { var d = new Intl.DisplayNames(['he'], { type: 'region' }); return function (c) { return c ? d.of(c) : ''; }; }
+          catch (e) { return function (c) { return c || ''; }; }
+        })();
+        var bview = { query: '', family: 'all', filter: null, shown: BOTTLE_PAGE };
+
+        // The tree as maps: each ingredient, its children, and the family a bottle counts under.
+        function bottleTree() {
+          var b = state.bottles;
+          if (b._tree) return b._tree;
+          var byId = {}, kids = {};
+          b.tree.forEach(function (i) { byId[i.id] = i; });
+          b.tree.forEach(function (i) { if (i.parent && byId[i.parent]) (kids[i.parent] = kids[i.parent] || []).push(i.id); });
+          function root(id) { var x = byId[id]; while (x && x.parent && byId[x.parent]) x = byId[x.parent]; return x; }
+          function family(id) {
+            var r = root(id);
+            if (!r) return { key: 'other', name: KIND.other };
+            if (!kids[r.id] && r.category !== 'spirit') return { key: 'kind:' + r.category, name: KIND[r.category] || r.category };
+            return { key: r.id, name: r.name };
+          }
+          b._tree = { byId: byId, kids: kids, family: family };
+          return b._tree;
+        }
+        function latestRound() {
+          return state.bottles.bottles.reduce(function (m, b) { return Math.max(m, Number(b.details.round) || 0); }, 0);
+        }
+        function priceMark(level) {
+          if (!level) return '';
+          return '<span class="lvl" title="רמת מחיר ' + level + ' מתוך 3 במשפחה">' + '₪'.repeat(level) + '<s>' + '₪'.repeat(3 - level) + '</s></span>';
+        }
+        function sourceLink(s) {
+          return s.url ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + '</a>' : esc(s.name);
+        }
+        function bottleCard(b, fresh) {
+          var t = bottleTree(), d = b.details || {};
+          var type = t.byId[b.type] ? t.byId[b.type].name : b.type;
+          var facts = ['<span>' + esc(type) + '</span>',
+            '<span class="' + (d.abv_source ? 'ok' : 'unk') + '" title="' + esc(d.abv_source ? 'כתוב בדף: ' + d.abv_source : 'לא אומת מול דף') + '">' + esc(String(Number(b.abv))) + '%' + (d.abv_source ? ' ✓' : '') + '</span>'];
+          if (b.country) facts.push('<span>' + esc(regionName(b.country)) + (b.region ? ', ' + esc(b.region) : '') + '</span>');
+          if (b.style) facts.push('<span>' + esc(b.style) + '</span>');
+          if (d.price_found_ils != null) facts.push('<span>' + esc(String(d.price_found_ils)) + ' ₪</span>');
+          var marks = [];
+          if (b.kosher === 'yes') marks.push('<span class="yes" title="השערה לפי מה שנכתב בדף; לא להסתמך">כשר (לפי דף)</span>');
+          if (b.gluten_free === 'yes') marks.push('<span class="yes" title="לפי מה שנכתב; לא התחייבות">ללא גלוטן (לפי היצרן)</span>');
+          (b.allergens || []).forEach(function (a) { marks.push('<span class="warn">' + esc(ALLERGEN[a] || a) + '</span>'); });
+          (b.flavors || []).forEach(function (f) { marks.push('<span>' + esc(FLAVOR[f] || f) + '</span>'); });
+          var notes = [];
+          if (b.importer) notes.push('<li><span class="k">יבואן:</span> ' + esc(b.importer) + '</li>');
+          if (d.abv_source) notes.push('<li><span class="k">חוזק:</span> ' + esc(d.abv_source) + '</li>');
+          if (d.abv_note) notes.push('<li><span class="k">חוזק:</span> ' + esc(d.abv_note) + '</li>');
+          if (d.kosher_source) notes.push('<li><span class="k">כשרות:</span> ' + sourceLink(d.kosher_source) + (d.kosher_source.words ? ' · "' + esc(d.kosher_source.words) + '"' : '') + '</li>');
+          if (d.kosher_note) notes.push('<li><span class="k">כשרות:</span> ' + esc(d.kosher_note) + '</li>');
+          if (d.gluten_free_source) notes.push('<li><span class="k">גלוטן:</span> ' + sourceLink(d.gluten_free_source) + (d.gluten_free_source.words ? ' · "' + esc(d.gluten_free_source.words) + '"' : '') + '</li>');
+          if (d.gluten_note) notes.push('<li><span class="k">גלוטן:</span> ' + esc(d.gluten_note) + '</li>');
+          if (d.allergens_basis) notes.push('<li><span class="k">רגישויות:</span> ' + esc(d.allergens_basis) + '</li>');
+          if (d.price_range_ils) notes.push('<li><span class="k">טווח מחירים:</span> ' + esc(d.price_range_ils.join('–')) + ' ₪</li>');
+          (b.sources || []).forEach(function (s) { notes.push('<li><span class="k">מקור:</span> ' + sourceLink(s) + '</li>'); });
+          (d.to_check || []).forEach(function (x) { notes.push('<li><span class="k">לבדוק:</span> ' + esc(x) + '</li>'); });
+          if (b.aliases && b.aliases.length) notes.push('<li><span class="k">שמות נוספים:</span> ' + esc(b.aliases.join(', ')) + '</li>');
+          notes.push('<li class="muted">סבב ' + esc(String(d.round || '?')) + (d.checked ? ' · נבדק ' + esc(d.checked) : '') + ' · <code>' + esc(b.id) + '</code></li>');
+          return '<div class="bottle' + (fresh ? ' fresh' : '') + '"><div class="top"><span class="nm">' + esc(b.name) + '</span>' + priceMark(b.price_level) + '</div>' +
+            '<div class="en">' + esc(b.en) + '</div><div class="facts">' + facts.join('') + '</div>' +
+            (b.description ? '<div class="desc">' + esc(b.description) + '</div>' : '') +
+            (marks.length ? '<div class="marks">' + marks.join('') + '</div>' : '') +
+            '<details><summary>מקורות ומה נבדק</summary><ul>' + notes.join('') + '</ul></details></div>';
+        }
+        function bottleMatches(b) {
+          var t = bottleTree();
+          if (bview.family !== 'all' && t.family(b.type).key !== bview.family) return false;
+          if (bview.filter === 'latest') { if (Number(b.details.round) !== latestRound()) return false; }
+          else if (bview.filter === 'kosher') { if (b.kosher !== 'yes') return false; }
+          else if (bview.filter === 'gluten') { if (b.gluten_free !== 'yes') return false; }
+          else if (bview.filter && GAPS[bview.filter] && !GAPS[bview.filter][1](b)) return false;
+          var q = normalize(bview.query);
+          if (!q) return true;
+          var type = t.byId[b.type] ? t.byId[b.type].name : '';
+          return [b.name, b.en, b.brand, b.brand_en, b.id, type, b.importer, regionName(b.country)].concat(b.aliases || [])
+            .some(function (s) { return normalize(s).indexOf(q) >= 0; });
+        }
+        function renderBottles() {
+          var root = $('tab-bottles');
+          if (!state.bottles) {
+            root.innerHTML = '<section class="card"><div class="soft">' + (state.bottlesError ? 'לא הצלחנו לטעון את הבקבוקים: ' + esc(state.bottlesError) : 'טוען…') + '</div></section>';
+            return;
+          }
+          // The minute's refresh leaves the search being typed alone.
+          if (root.contains(document.activeElement) && document.activeElement.id === 'bottle-finder') { renderBottleList(); return; }
+          var t = bottleTree(), all = state.bottles.bottles, latest = latestRound();
+          var families = {}, familyNames = {}, countries = {}, levels = {}, typesUsed = {};
+          all.forEach(function (b) {
+            var f = t.family(b.type);
+            families[f.key] = (families[f.key] || 0) + 1; familyNames[f.key] = f.name;
+            var c = b.country || 'none'; countries[c] = (countries[c] || 0) + 1;
+            if (b.price_level) levels[b.price_level] = (levels[b.price_level] || 0) + 1;
+            typesUsed[b.type] = true;
+          });
+          var countryNames = {}; Object.keys(countries).forEach(function (c) { countryNames[c] = c === 'none' ? 'לא ידוע' : regionName(c); });
+          var html = '<div class="grid tiles">' + tile(all.length, 'בקבוקים') + tile(Object.keys(typesUsed).length, 'סוגים עם בקבוק') +
+            tile(all.filter(function (b) { return b.details.abv_source; }).length, 'חוזק אומת מול דף') +
+            tile(all.filter(function (b) { return b.kosher === 'yes'; }).length, 'כשר לפי דף') +
+            tile(all.filter(function (b) { return b.details.price_found_ils != null; }).length, 'עם מחיר מחנות') + '</div>';
+
+          html += '<div class="grid three">';
+          html += '<section class="card reveal"><h2 class="t">לפי משפחה <small>בקבוקים</small></h2>' + barList(families, familyNames) + '</section>';
+          var topCountries = Object.keys(countries).sort(function (a, b) { return countries[b] - countries[a]; }).slice(0, 12)
+            .reduce(function (o, k) { o[k] = countries[k]; return o; }, {});
+          html += '<section class="card reveal"><h2 class="t">מאיפה <small>' + Object.keys(countries).filter(function (c) { return c !== 'none'; }).length + ' ארצות</small></h2>' + barList(topCountries, countryNames) + '</section>';
+          html += '<section class="card reveal"><h2 class="t">רמת מחיר <small>ביחס למשפחה שלו</small></h2>' + barList(levels, { 1: '₪ הזול במשפחה', 2: '₪₪ באמצע', 3: '₪₪₪ היקר' }, ['1', '2', '3']) +
+            '<h2 class="t" style="margin-top:22px">מה עוד חסר <small>לחיצה מסננת</small></h2><div class="gaps">' +
+            Object.keys(GAPS).map(function (k) {
+              return '<button type="button" class="row" data-gap="' + k + '"><span>' + GAPS[k][0] + '</span><b>' + all.filter(GAPS[k][1]).length + '</b></button>';
+            }).join('') + '</div></section>';
+          html += '</div>';
+
+          var famKeys = Object.keys(families).sort(function (a, b) { return families[b] - families[a]; });
+          var filters = [['latest', 'סבב אחרון (' + latest + ')'], ['kosher', 'כשר לפי דף'], ['gluten', 'ללא גלוטן לפי היצרן']]
+            .concat(Object.keys(GAPS).map(function (k) { return [k, GAPS[k][0]]; }));
+          html += '<section class="reveal" style="margin-top:30px"><h2 class="t">כל בקבוק <small>שם, מותג, סוג, יבואן או כינוי</small></h2>' +
+            '<label class="finder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="7"/><path d="M16 16l5 5"/></svg>' +
+            '<input id="bottle-finder" type="search" placeholder="ג׳יימסון, bourbon, קמפרי…" value="' + esc(bview.query) + '" autocomplete="off" /></label>' +
+            '<div class="chips">' + ['all'].concat(famKeys).map(function (k) {
+              return '<button type="button" class="chip" data-family="' + esc(k) + '" aria-pressed="' + (bview.family === k) + '">' + esc(k === 'all' ? 'הכל' : familyNames[k]) + '<span class="c">' + (k === 'all' ? all.length : families[k]) + '</span></button>';
+            }).join('') + '</div>' +
+            '<div class="chips">' + filters.map(function (f) {
+              return '<button type="button" class="chip" data-bfilter="' + f[0] + '" aria-pressed="' + (bview.filter === f[0]) + '">' + esc(f[1]) + '</button>';
+            }).join('') + '</div>' +
+            '<div class="muted" id="bottle-count" style="font-size:14px;margin-bottom:10px"></div><div class="bottles" id="bottle-list"></div><div id="bottle-more-wrap"></div></section>';
+
+          // Types in the tree with no bottle yet (a family's own types, not the catalog's lemon juice).
+          var empty = state.bottles.tree.filter(function (i) {
+            if (i.group || typesUsed[i.id]) return false;
+            var inFamily = (i.parent && t.byId[i.parent]) || t.kids[i.id];
+            if (!inFamily) return false;
+            var below = (function count(id) { return (t.kids[id] || []).some(function (k) { return typesUsed[k] || count(k); }); })(i.id);
+            return !below;
+          }).map(function (i) { return { id: i.id, name: i.name + ' · ' + t.family(i.id).name }; })
+            .sort(function (a, b) { return a.name < b.name ? -1 : 1; });
+          html += '<div class="grid two">' + missing(empty, 'סוגים בעץ בלי בקבוק') + '</div>';
+          root.innerHTML = html;
+          renderBottleList();
+        }
+        function renderBottleList() {
+          var box = $('bottle-list');
+          if (!box) return;
+          var list = state.bottles.bottles.filter(bottleMatches), latest = latestRound();
+          $('bottle-count').textContent = list.length === state.bottles.bottles.length ? list.length + ' בקבוקים' : list.length + ' מתוך ' + state.bottles.bottles.length;
+          box.innerHTML = list.slice(0, bview.shown).map(function (b) { return bottleCard(b, Number(b.details.round) === latest); }).join('') ||
+            '<div class="empty">לא נמצא בקבוק כזה.</div>';
+          $('bottle-more-wrap').innerHTML = list.length > bview.shown
+            ? '<button type="button" class="act more" id="bottle-more">עוד ' + Math.min(BOTTLE_PAGE, list.length - bview.shown) + ' (נשארו ' + (list.length - bview.shown) + ')</button>'
+            : '';
+        }
+        $('tab-bottles').addEventListener('input', function (e) {
+          if (e.target.id !== 'bottle-finder') return;
+          bview.query = e.target.value; bview.shown = BOTTLE_PAGE; renderBottleList();
+        });
+        $('tab-bottles').addEventListener('click', function (e) {
+          var el = e.target.closest('[data-family],[data-bfilter],[data-gap],#bottle-more');
+          if (!el) return;
+          if (el.id === 'bottle-more') { bview.shown += BOTTLE_PAGE; renderBottleList(); return; }
+          if (el.dataset.family) bview.family = el.dataset.family;
+          if (el.dataset.bfilter) bview.filter = bview.filter === el.dataset.bfilter ? null : el.dataset.bfilter;
+          if (el.dataset.gap) { bview.filter = el.dataset.gap; bview.family = 'all'; }
+          bview.shown = BOTTLE_PAGE;
+          renderBottles();
+          revealAll();
+          if (el.dataset.gap) $('bottle-finder').scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'center' });
+        });
 
         // ---------- Tooltip ----------
         document.addEventListener('mousemove', function (e) {
