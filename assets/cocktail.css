@@ -276,6 +276,71 @@ h1 {
   font-weight: 400;
 }
 
+/* What's in the glass: three readings in one low well, like the app's; the "i" opens the note. */
+.glass summary {
+  display: flex;
+  align-items: center;
+  padding: 8px 0 8px 12px;
+  border-radius: 16px;
+  background: var(--well);
+  box-shadow: var(--recessed);
+  cursor: pointer;
+  list-style: none;
+}
+
+.glass summary::-webkit-details-marker {
+  display: none;
+}
+
+.glass summary span {
+  flex: 1;
+  padding: 0 4px;
+  color: var(--cream-soft);
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.glass summary span + span {
+  border-inline-start: 1px solid var(--edge);
+}
+
+.glass summary b {
+  display: block;
+  color: var(--cream);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 22px;
+}
+
+.glass summary i {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin: 0 12px;
+  border: 1.5px solid var(--cream-muted);
+  border-radius: 50%;
+  color: var(--cream-muted);
+  font-family: Georgia, serif;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.glass[open] summary i {
+  border-color: var(--brass);
+  color: var(--brass);
+}
+
+.glass p {
+  margin: 12px 0 0;
+  color: var(--cream-soft);
+  font-size: 14px;
+  line-height: 20px;
+}
+
 .specs {
   margin: 0;
 }
