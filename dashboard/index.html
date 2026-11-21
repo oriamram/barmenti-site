@@ -965,7 +965,31 @@
           }
           return [h, s, l];
         }
-        function normalize(s) { return String(s || '').toLowerCase().replace(/[׳'"`\-\s]/g, ''); }
+        // Search text: no case, quote marks, hyphens, spaces or niqqud; final letters as regular
+        // ones, and a doubled ו or י as one (וויסקי is ויסקי).
+        var FINALS = { 'ך': 'כ', 'ם': 'מ', 'ן': 'נ', 'ף': 'פ', 'ץ': 'צ' };
+        function normalize(s) {
+          return String(s || '').toLowerCase().replace(/[֑-ׇ]/g, '').replace(/[׳״'"`’.\-\s]/g, '')
+            .replace(/[ךםןףץ]/g, function (c) { return FINALS[c]; }).replace(/וו+/g, 'ו').replace(/יי+/g, 'י');
+        }
+        // A close spelling: the query sits somewhere in the text with one letter wrong, missing
+        // or extra (two from 8 letters on). Both already normalized. Used only when nothing
+        // matches as written.
+        function near(text, q) {
+          var allowed = q.length >= 8 ? 2 : q.length >= 4 ? 1 : 0;
+          if (!allowed || !text) return false;
+          var prev = [], i, j;
+          for (j = 0; j <= text.length; j++) prev[j] = 0;
+          for (i = 1; i <= q.length; i++) {
+            var row = [i];
+            for (j = 1; j <= text.length; j++) {
+              row[j] = Math.min(prev[j - 1] + (q.charAt(i - 1) === text.charAt(j - 1) ? 0 : 1), prev[j] + 1, row[j - 1] + 1);
+            }
+            prev = row;
+          }
+          return Math.min.apply(null, prev) <= allowed;
+        }
+        function found(text, q, loose) { text = normalize(text); return loose ? near(text, q) : text.indexOf(q) >= 0; }
         function renderCatalog() {
           var c = state.catalog, shelf = c.shelf;
           var html = '<div class="grid tiles">' + tile(c.cocktails, 'קוקטיילים') + tile(c.with_photo, 'עם תמונה') + tile(c.ingredients, 'מרכיבים') + tile(c.favorites, 'לבבות במועדפים') + '</div>';
@@ -1036,8 +1060,11 @@
           if (!box) return;
           var q = normalize(state.query);
           var shelf = state.catalog.shelf;
+          function hit(loose) {
+            return shelf.filter(function (x) { return found(x.name, q, loose) || found(x.en, q, loose) || found(x.id, q, loose) || (!loose && (x.tags || []).some(function (t) { return t === q || normalize(L.bases[t]) === q; })); });
+          }
           var list = q
-            ? shelf.filter(function (x) { return normalize(x.name).indexOf(q) >= 0 || normalize(x.en).indexOf(q) >= 0 || normalize(x.id).indexOf(q) >= 0 || (x.tags || []).some(function (t) { return t === q || normalize(L.bases[t]) === q; }); })
+            ? (function () { var exact = hit(false); return exact.length ? exact : hit(true); })()
             : shelf.slice().sort(function (a, b) { return b.favorites + b.reports * 2 - (a.favorites + a.reports * 2); }).slice(0, 8);
           box.innerHTML = list.slice(0, 24).map(drinkCard).join('') || '<div class="empty">לא נמצא. אולי זה הקוקטייל הבא שצריך להוסיף?</div>';
         }
@@ -1132,7 +1159,7 @@
             (marks.length ? '<div class="marks">' + marks.join('') + '</div>' : '') +
             '<details><summary>מקורות ומה נבדק</summary><ul>' + notes.join('') + '</ul></details></div>';
         }
-        function bottleMatches(b) {
+        function bottleMatches(b, loose) {
           var t = bottleTree();
           if (bview.family !== 'all' && t.family(b.type).key !== bview.family) return false;
           if (bview.filter === 'latest') { if (Number(b.details.round) !== latestRound()) return false; }
@@ -1143,7 +1170,7 @@
           if (!q) return true;
           var type = t.byId[b.type] ? t.byId[b.type].name : '';
           return [b.name, b.en, b.brand, b.brand_en, b.id, type, b.importer, regionName(b.country)].concat(b.aliases || [])
-            .some(function (s) { return normalize(s).indexOf(q) >= 0; });
+            .some(function (s) { return found(s, q, loose); });
         }
         function renderBottles() {
           var root = $('tab-bottles');
@@ -1210,7 +1237,9 @@
         function renderBottleList() {
           var box = $('bottle-list');
           if (!box) return;
-          var list = state.bottles.bottles.filter(bottleMatches), latest = latestRound();
+          var list = state.bottles.bottles.filter(function (b) { return bottleMatches(b, false); }), latest = latestRound();
+          // Nothing as written: the close spellings.
+          if (!list.length && normalize(bview.query)) list = state.bottles.bottles.filter(function (b) { return bottleMatches(b, true); });
           $('bottle-count').textContent = list.length === state.bottles.bottles.length ? list.length + ' בקבוקים' : list.length + ' מתוך ' + state.bottles.bottles.length;
           box.innerHTML = list.slice(0, bview.shown).map(function (b) { return bottleCard(b, Number(b.details.round) === latest); }).join('') ||
             '<div class="empty">לא נמצא בקבוק כזה.</div>';

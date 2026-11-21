@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>הצטרפות לצוות · ברמנ'תי</title>
+    <!--
+      Where a join link lands when the phone doesn't open the app by itself (no app yet, or a
+      build from before app links): https://barmenti.com/join/?code=XXXX-XXXX, the QR code on a
+      bar's device. With the app, the button opens its join screen with the code; without it,
+      the stores. A code lives two minutes, so someone who installs first scans again.
+    -->
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="הצטרפות לצוות של בר בברמנ'תי." />
+    <meta name="theme-color" content="#17120F" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ברמנ'תי" />
+    <meta property="og:title" content="הצטרפות לצוות · ברמנ'תי" />
+    <meta property="og:description" content="סורקים את הקוד על מכשיר הבר, ואתם בצוות." />
+    <meta property="og:image" content="https://barmenti.com/assets/og.jpg" />
+    <meta property="og:locale" content="he_IL" />
+    <link rel="icon" type="image/png" href="../assets/favicon.png" />
+    <style>
+      html, body { margin: 0; min-height: 100%; }
+      body {
+        display: grid; place-items: center; text-align: center; padding: 32px 16px; box-sizing: border-box;
+        min-height: 100vh; background: linear-gradient(180deg, #17120f 0%, #0a0706 100%); color: #f2e6d3;
+        font-family: 'Assistant', 'Segoe UI', Arial, sans-serif;
+      }
+      main { width: 100%; max-width: 420px; }
+      img.logo { width: 76px; height: 76px; border-radius: 19px; }
+      h1 { font-size: 34px; margin: 16px 0 6px; }
+      p { color: #bfaf99; font-size: 18px; line-height: 1.5; margin: 0 0 22px; }
+      .code { display: flex; gap: 6px; justify-content: center; direction: ltr; margin: 0 0 22px; }
+      .code span {
+        width: 34px; height: 44px; display: grid; place-items: center; border-radius: 9px; font-size: 22px; font-weight: 700;
+        background: #0e0a08; box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7), inset 0 -1px 0 rgba(242, 230, 211, 0.06);
+      }
+      .code i { width: 8px; }
+      a.open {
+        display: block; padding: 15px 20px; border-radius: 14px; background: #d9574b; color: #fff8ee;
+        font-size: 20px; font-weight: 700; text-decoration: none; margin: 0 0 30px;
+      }
+      a.open:focus-visible, .stores a:focus-visible { outline: 3px solid #e0a94a; outline-offset: 3px; }
+      h2 { font-size: 18px; color: #d2b46c; margin: 0 0 12px; }
+      ol { text-align: start; color: #bfaf99; font-size: 17px; line-height: 1.6; margin: 0 0 20px; padding-inline-start: 22px; }
+      .stores { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+      .stores img { height: 50px; width: auto; display: block; }
+      [hidden] { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img class="logo" src="../assets/logo.webp" alt="" />
+      <h1>הצטרפות לצוות</h1>
+
+      <div id="with-code" hidden>
+        <p>הקוד שסרקתם מהמכשיר של הבר:</p>
+        <div class="code" id="code" aria-label="קוד ההצטרפות"></div>
+        <a class="open" id="open" href="barmenti://join">לפתוח בברמנ'תי</a>
+      </div>
+      <p id="no-code">
+        מצטרפים לצוות של בר בסריקה: במכשיר של הבר לוחצים על "צירוף לצוות", וסורקים את הקוד
+        מהאפליקציה (פרופיל ← הצטרפות לצוות) או במצלמה של הטלפון.
+      </p>
+
+      <h2>אין לכם עדיין את האפליקציה?</h2>
+      <ol>
+        <li>מורידים את ברמנ'תי, בחינם.</li>
+        <li>נרשמים.</li>
+        <li>סורקים שוב את הקוד מהמכשיר של הבר. הקוד מתחלף כל שתי דקות, אז סורקים את החדש.</li>
+      </ol>
+      <div class="stores">
+        <a href="https://apps.apple.com/il/app/id6824944138" rel="noopener">
+          <img src="../assets/badges/app-store.svg" alt="להורדה מ־App Store" width="146" height="50" />
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.barmenti.app" rel="noopener">
+          <img src="../assets/badges/google-play.png" alt="להורדה מ־Google Play" width="168" height="50" />
+        </a>
+      </div>
+    </main>
+    <script>
+      // Only a code shaped like ours is shown or passed on: eight letters and digits.
+      (function () {
+        var raw = (new URLSearchParams(location.search).get('code') || '').replace(/-/g, '').toUpperCase();
+        if (!/^[A-Z0-9]{8}$/.test(raw)) return;
+        var box = document.getElementById('code');
+        raw.split('').forEach(function (ch, i) {
+          if (i === 4) box.appendChild(document.createElement('i'));
+          var cell = document.createElement('span');
+          cell.textContent = ch;
+          box.appendChild(cell);
+        });
+        document.getElementById('open').href = 'barmenti://join?code=' + raw.slice(0, 4) + '-' + raw.slice(4);
+        document.getElementById('with-code').hidden = false;
+        document.getElementById('no-code').hidden = true;
+      })();
+    </script>
+  </body>
+</html>
