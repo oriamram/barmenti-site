@@ -36,7 +36,7 @@
 - [בולברדייה (Boulevardier)](https://barmenti.com/cocktail/boulevardier/): כמו נגרוני, אבל עם ויסקי במקום ג׳ין: מריר-מתוק, עשיר וחמים יותר. מתאים לערב קריר ולאוהבי ויסקי.
 - [פניצילין (Penicillin)](https://barmenti.com/cocktail/penicillin/): סקוץ׳, לימון, דבש וג׳ינג׳ר, עם עשן של ויסקי מאיילה מעל. חמוץ-מתוק, חריף ומעושן. מודרני ומנחם.
 - [בלאק ראשן (Black Russian)](https://barmenti.com/cocktail/black-russian/): וודקה וליקר קפה על קרח: מתוק, חזק ובטעם קפה. פשוט להכנה, ומתאים אחרי ארוחה.
-- [ויסקי קולה (Whiskey & Cola)](https://barmenti.com/cocktail/whiskey-cola/): ויסקי וקולה על הרבה קרח. הכי פשוט, ומהמוזמנים ביותר בבר.
+- [ויסקי קולה (Whiskey & Cola)](https://barmenti.com/cocktail/whiskey-cola/): ויסקי וקולה על הרבה קרח: מתוק, מבעבע וקל לשתייה. הכי פשוט, ומהמוזמנים ביותר בבר.
 - [פיסקו סאוור (Pisco Sour)](https://barmenti.com/cocktail/pisco-sour/): פיסקו, לימון וסוכר עם קצף לבן ונגיעת ביטרס. חמוץ, רך וארומטי, הקוקטייל הלאומי של פרו.
 - [קלובר קלאב (Clover Club)](https://barmenti.com/cocktail/clover-club/): ג׳ין, לימון ופטל, עם קצף ורוד. פירותי, חמצמץ ואלגנטי, לא מתוק מדי.
 - [דארק אנד סטורמי (Dark 'N' Stormy)](https://barmenti.com/cocktail/dark-n-stormy/): רום שחור מעל ג׳ינג׳ר ביר: חריף, מתקתק ומרענן. קרוב משפחה של המוסקו מיול, עם רום.
@@ -46,7 +46,7 @@
 - [מאי טאי (Mai Tai)](https://barmenti.com/cocktail/mai-tai/): שני סוגי רום, ליים, ליקר תפוזים ושקדים: פירותי, עשיר ומאוזן. מלך קוקטיילי הטיקי, טעם של חופשה.
 - [ג׳ין פיז (Gin Fizz)](https://barmenti.com/cocktail/gin-fizz/): ג׳ין, לימון וסוכר עם סודה: חמוץ, מבעבע וקליל. מוגש בלי קרח, רענן ונשתה מהר.
 - [טום קולינס (Tom Collins)](https://barmenti.com/cocktail/tom-collins/): ג׳ין, לימון, סוכר וסודה: חמצמץ, מבעבע וקליל. לימונדה למבוגרים, מרענן ביום חם.
-- [אייריש קופי (Irish Coffee)](https://barmenti.com/cocktail/irish-coffee/): קפה חם, ויסקי אירי ושכבת שמנת קרה מעל. שותים דרך השמנת, בלי לערבב.
+- [אייריש קופי (Irish Coffee)](https://barmenti.com/cocktail/irish-coffee/): קפה חם, ויסקי אירי ושכבת שמנת קרה מעל: מריר-מתוק, חם ועשיר. שותים דרך השמנת, בלי לערבב.
 - [ערק לימונענע (Arak Limonana)](https://barmenti.com/cocktail/arak-limonana/): ערק, לימון ונענע עם סודה: אניסי, חמצמץ ומרענן. הקלאסיקה הישראלית לקיץ.
 - [פורנסטאר מרטיני (Porn Star Martini)](https://barmenti.com/cocktail/porn-star-martini/): וודקה וניל ופסיפלורה, עם שוט שמפניה בצד: מתוק, פירותי ושובב. הלהיט של כל חגיגה.
 - [ג׳ין בזיל סמאש (Gin Basil Smash)](https://barmenti.com/cocktail/gin-basil-smash/): ג׳ין, לימון ובזיליקום טרי: ירוק, ריחני ורענן. מודרני ופשוט, מושלם ליום חם.
@@ -58,7 +58,7 @@
 - [לאסט וורד (Last Word)](https://barmenti.com/cocktail/last-word/): ג׳ין, שארטרז ירוק, מרסקינו וליים בחלקים שווים: צמחי, חמוץ-מתוק ומורכב. למי שאוהב טעמים נועזים.
 - [לימונצ׳לו שפריץ (Limoncello Spritz)](https://barmenti.com/cocktail/limoncello-spritz/): פרוסקו, לימונצ׳לו וסודה ביחס 3:2:1: לימוני, מתקתק ומבעבע. שפריץ קיצי וקליל.
 - [למון דרופ (Lemon Drop Martini)](https://barmenti.com/cocktail/lemon-drop-martini/): וודקה, ליקר תפוזים ולימון: חמוץ-מתוק כמו סוכריית לימון. קליל ורענן.
-- [מרגריטה פרוזן (Frozen Margarita)](https://barmenti.com/cocktail/frozen-margarita/): מרגריטה טחונה עם קרח לברד חלק. לקיץ ולאירועים.
+- [מרגריטה פרוזן (Frozen Margarita)](https://barmenti.com/cocktail/frozen-margarita/): מרגריטה טחונה עם קרח לברד חלק: חמוצה-מתוקה, קפואה ומרעננת. לקיץ ולאירועים.
 - [פייפר פליין (Paper Plane)](https://barmenti.com/cocktail/paper-plane/): בורבון, אפרול, אמרו ולימון בחלקים שווים: מריר-מתוק, הדרי ומאוזן. מודרני וקל לאהוב.
 - [סאזרק (Sazerac)](https://barmenti.com/cocktail/sazerac/): קוניאק, סוכר וביטרס פיישו׳ס, בכוס שטופה באבסינת: חזק, ארומטי ועם ניחוח אניס. הקוקטייל של ניו אורלינס, מוגש בלי קרח.
 - [קאיפירינייה (Caipirinha)](https://barmenti.com/cocktail/caipirinha/): קשאסה עם ליים כתוש וסוכר: חמוץ, מתוק וחזק. הקוקטייל הלאומי של ברזיל, פשוט ומרענן.
@@ -86,7 +86,7 @@
 - [פינה קולדה (Piña Colada)](https://barmenti.com/cocktail/pina-colada/): רום, קוקוס ואננס בבלנדר: קרמי, מתוק וטרופי. טעם של חופשה בכוס.
 - [איסט 8 הולד-אפ (East 8 Hold-up)](https://barmenti.com/cocktail/east-8-hold-up/): וודקה עם אננס, פסיפלורה, אפרול וליים: פירותי, חמצמץ ונגיש. מודרני ומתאים כמעט לכולם.
 - [ניו יורק סאוור (New York Sour)](https://barmenti.com/cocktail/new-york-sour/): ויסקי סאוור עם שכבת יין אדום שצפה מעל: חמוץ-מתוק, עם פירותיות ויובש מהיין. יפה במיוחד בהגשה.
-- [בלו לגון (Blue Lagoon)](https://barmenti.com/cocktail/blue-lagoon/): כחול כמו לגונה: וודקה, בלו קוראסאו, ליים וספרייט.
+- [בלו לגון (Blue Lagoon)](https://barmenti.com/cocktail/blue-lagoon/): וודקה, בלו קוראסאו, ליים וספרייט: מתוק, הדרי ומבעבע, כחול כמו לגונה.
 - [גודפאדר (Godfather)](https://barmenti.com/cocktail/godfather/): סקוץ׳ ואמרטו על קרח: מתוק, שקדי וחזק. משקה פשוט של שני מרכיבים, אהוב משנות ה־70.
 - [דאיקירי תות (Strawberry Daiquiri)](https://barmenti.com/cocktail/strawberry-daiquiri/): דאיקירי עם תותים טריים כתושים: פירותי, חמוץ־מתוק ורענן. אפשר להכין גם בבלנדר עם קרח.
 - [ויה קארה (Vieux Carré)](https://barmenti.com/cocktail/vieux-carre/): ויסקי שיפון, קוניאק, ורמוט ובנדיקטין: עשיר, מתובל ומחמם. קוקטייל חזק ללגימה איטית.
