@@ -39,7 +39,7 @@
 
   function showSpec(c) {
     const head = el('div', 'spec-head');
-    head.append(el('h3', null, c.he), el('span', 'en', c.en));
+    head.append(el('h2', null, c.he), el('span', 'en', c.en));
     const list = el('ul', 'ings');
     c.ings.forEach(([value, unit, name]) => {
       const li = el('li');
