@@ -186,8 +186,110 @@
 - [וֶנטו (Ve.N.To)](https://barmenti.com/cocktail/ve-n-to/): גראפה, לימון, דבש וקמומיל: פרחוני, חמצמץ ועדין. קוקטייל איטלקי מודרני.
 - [IBA טיקי (IBA Tiki)](https://barmenti.com/cocktail/iba-tiki/): שני רומים מיושנים, אמרטו, פרנג׳ליקו, פסיפלורה, אננס וג׳ינג׳ר: טיקי פירותי, אגוזי ומתובל. הקוקטייל שה־IBA יצר לעצמו.
 
-## עוד
+## רשימות
 
 - [כל הקוקטיילים](https://barmenti.com/cocktails/): הרשימה המלאה, לפי אלכוהול הבסיס
+- [קוקטיילים עם ג׳ין](https://barmenti.com/cocktails/gin/): 38 מתכונים
+- [קוקטיילים עם וודקה](https://barmenti.com/cocktails/vodka/): 24 מתכונים
+- [קוקטיילים עם רום](https://barmenti.com/cocktails/rum/): 27 מתכונים
+- [קוקטיילים עם טקילה](https://barmenti.com/cocktails/tequila/): 10 מתכונים
+- [קוקטיילים עם מזקל](https://barmenti.com/cocktails/mezcal/): 6 מתכונים
+- [קוקטיילים עם ויסקי](https://barmenti.com/cocktails/whiskey/): 33 מתכונים
+- [קוקטיילים עם ברנדי וקוניאק](https://barmenti.com/cocktails/brandy/): 15 מתכונים
+- [קוקטיילים עם פיסקו](https://barmenti.com/cocktails/pisco/): 3 מתכונים
+- [קוקטיילים עם יין ובועות](https://barmenti.com/cocktails/wine/): 11 מתכונים
+- [קוקטיילים עם ליקר ואפריטיף](https://barmenti.com/cocktails/liqueur/): 9 מתכונים
+- [קוקטיילים בלי אלכוהול](https://barmenti.com/cocktails/zero/): 11 מתכונים
+- [קוקטיילים חמוצים](https://barmenti.com/cocktails/sour/): 62 מתכונים
+- [קוקטיילים הדריים](https://barmenti.com/cocktails/citrus/): 57 מתכונים
+- [קוקטיילים מרירים](https://barmenti.com/cocktails/bitter/): 27 מתכונים
+- [קוקטיילים מתוקים](https://barmenti.com/cocktails/sweet/): 47 מתכונים
+- [קוקטיילים יבשים](https://barmenti.com/cocktails/dry/): 6 מתכונים
+- [קוקטיילים פירותיים](https://barmenti.com/cocktails/fruity/): 44 מתכונים
+- [קוקטיילים עשבוניים](https://barmenti.com/cocktails/herbal/): 27 מתכונים
+- [קוקטיילים חריפים](https://barmenti.com/cocktails/spicy/): 4 מתכונים
+- [קוקטיילים מרעננים](https://barmenti.com/cocktails/refreshing/): 41 מתכונים
+- [קוקטיילים קרמיים](https://barmenti.com/cocktails/creamy/): 11 מתכונים
+- [קוקטיילים עם קפה](https://barmenti.com/cocktails/coffee/): 6 מתכונים
+- [קוקטיילים מעושנים](https://barmenti.com/cocktails/smoky/): 7 מתכונים
+- [קוקטיילי IBA](https://barmenti.com/cocktails/iba/): 102 מתכונים
+- [קוקטיילים קלים להכנה](https://barmenti.com/cocktails/easy/): 49 מתכונים
+- [קוקטיילים עם 3 מרכיבים או פחות](https://barmenti.com/cocktails/three-ingredients/): 79 מתכונים
+- [קוקטיילי טיקי](https://barmenti.com/cocktails/tiki/): 12 מתכונים
+- [קוקטיילי שפריץ](https://barmenti.com/cocktails/spritz/): 4 מתכונים
+- [קוקטיילים לחורף](https://barmenti.com/cocktails/winter/): 9 מתכונים
+- [קוקטיילים מסרטים וסדרות](https://barmenti.com/cocktails/screen/): 16 מתכונים
+
+## מרכיבים
+
+- [כל המרכיבים](https://barmenti.com/ingredients/): מה זה כל מרכיב, ובאילו קוקטיילים הוא נמצא
+- [קוקטיילים עם מיץ ליים](https://barmenti.com/ingredient/lime-juice/): 50 מתכונים
+- [קוקטיילים עם מיץ לימון](https://barmenti.com/ingredient/lemon-juice/): 48 מתכונים
+- [קוקטיילים עם סירופ סוכר](https://barmenti.com/ingredient/simple-syrup/): 38 מתכונים
+- [קוקטיילים עם ליקר פירות ופרחים](https://barmenti.com/ingredient/fruit-flower-liqueurs/): 29 מתכונים
+- [קוקטיילים עם ורמוט](https://barmenti.com/ingredient/vermouth/): 26 מתכונים
+- [קוקטיילים עם אמארו וביטר](https://barmenti.com/ingredient/amaro-liqueurs/): 24 מתכונים
+- [קוקטיילים עם אנגוסטורה](https://barmenti.com/ingredient/angostura/): 22 מתכונים
+- [קוקטיילים עם ליקר תפוז](https://barmenti.com/ingredient/orange-liqueurs/): 22 מתכונים
+- [קוקטיילים עם ורמוט אדום](https://barmenti.com/ingredient/sweet-vermouth/): 18 מתכונים
+- [קוקטיילים עם ליקר עשבים ותבלינים](https://barmenti.com/ingredient/herbal-liqueurs/): 17 מתכונים
+- [קוקטיילים עם רום לבן](https://barmenti.com/ingredient/white-rum/): 17 מתכונים
+- [קוקטיילים עם מיץ אננס](https://barmenti.com/ingredient/pineapple-juice/): 15 מתכונים
+- [קוקטיילים עם נענע](https://barmenti.com/ingredient/mint/): 15 מתכונים
+- [קוקטיילים עם טריפל סק](https://barmenti.com/ingredient/triple-sec/): 14 מתכונים
+- [קוקטיילים עם מיץ תפוזים](https://barmenti.com/ingredient/orange-juice/): 14 מתכונים
+- [קוקטיילים עם סודה](https://barmenti.com/ingredient/soda-water/): 14 מתכונים
+- [קוקטיילים עם קמפרי](https://barmenti.com/ingredient/campari/): 14 מתכונים
+- [קוקטיילים עם בורבון](https://barmenti.com/ingredient/bourbon/): 13 מתכונים
+- [קוקטיילים עם יין מבעבע](https://barmenti.com/ingredient/sparkling-wine/): 13 מתכונים
+- [קוקטיילים עם ליקר מרסקינו](https://barmenti.com/ingredient/maraschino/): 13 מתכונים
+- [קוקטיילים עם גרנדין](https://barmenti.com/ingredient/grenadine/): 12 מתכונים
+- [קוקטיילים עם ויסקי שיפון](https://barmenti.com/ingredient/rye-whiskey/): 11 מתכונים
+- [קוקטיילים עם ליקר קפה, שוקולד ואגוזים](https://barmenti.com/ingredient/coffee-chocolate-nut-liqueurs/): 11 מתכונים
+- [קוקטיילים עם חלבון ביצה](https://barmenti.com/ingredient/egg-white/): 10 מתכונים
+- [קוקטיילים עם קוניאק](https://barmenti.com/ingredient/cognac/): 10 מתכונים
+- [קוקטיילים עם ביטרס תפוזים](https://barmenti.com/ingredient/orange-bitters/): 9 מתכונים
+- [קוקטיילים עם סירופ דבש](https://barmenti.com/ingredient/honey-syrup/): 9 מתכונים
+- [קוקטיילים עם פרוסקו](https://barmenti.com/ingredient/prosecco/): 9 מתכונים
+- [קוקטיילים עם ורמוט יבש](https://barmenti.com/ingredient/dry-vermouth/): 8 מתכונים
+- [קוקטיילים עם סקוץ׳ בלנדד](https://barmenti.com/ingredient/blended-scotch/): 7 מתכונים
+- [קוקטיילים עם ג׳ינג׳ר ביר](https://barmenti.com/ingredient/ginger-beer/): 6 מתכונים
+- [קוקטיילים עם ערק ואניס](https://barmenti.com/ingredient/anise-spirits/): 6 מתכונים
+- [קוקטיילים עם שארטרז ירוק](https://barmenti.com/ingredient/green-chartreuse/): 6 מתכונים
+- [קוקטיילים עם שמנת מתוקה](https://barmenti.com/ingredient/cream/): 6 מתכונים
+- [קוקטיילים עם אבסינת](https://barmenti.com/ingredient/absinthe/): 5 מתכונים
+- [קוקטיילים עם אמרטו](https://barmenti.com/ingredient/amaretto/): 5 מתכונים
+- [קוקטיילים עם אפרול](https://barmenti.com/ingredient/aperol/): 5 מתכונים
+- [קוקטיילים עם ליים](https://barmenti.com/ingredient/lime/): 5 מתכונים
+- [קוקטיילים עם מיץ חמוציות](https://barmenti.com/ingredient/cranberry-juice/): 5 מתכונים
+- [קוקטיילים עם פלרנום](https://barmenti.com/ingredient/falernum/): 5 מתכונים
+- [קוקטיילים עם קולה](https://barmenti.com/ingredient/cola/): 5 מתכונים
+- [קוקטיילים עם רום שחור](https://barmenti.com/ingredient/black-rum/): 5 מתכונים
+- [קוקטיילים עם ליקר קפה](https://barmenti.com/ingredient/coffee-liqueur/): 4 מתכונים
+- [קוקטיילים עם מיץ אשכוליות](https://barmenti.com/ingredient/grapefruit-juice/): 4 מתכונים
+- [קוקטיילים עם סוכר קנים לבן](https://barmenti.com/ingredient/sugar/): 4 מתכונים
+- [קוקטיילים עם סירופ אגבה](https://barmenti.com/ingredient/agave-syrup/): 4 מתכונים
+- [קוקטיילים עם סירופ סוכר עשיר (2:1)](https://barmenti.com/ingredient/rich-simple-syrup/): 4 מתכונים
+- [קוקטיילים עם קורסאו תפוזים](https://barmenti.com/ingredient/orange-curacao/): 4 מתכונים
+- [קוקטיילים עם קרם קוקוס](https://barmenti.com/ingredient/coconut-cream/): 4 מתכונים
+- [קוקטיילים עם רום זהוב](https://barmenti.com/ingredient/gold-rum/): 4 מתכונים
+- [קוקטיילים עם רום מיושן](https://barmenti.com/ingredient/aged-rum/): 4 מתכונים
+- [קוקטיילים עם שמפניה](https://barmenti.com/ingredient/champagne/): 4 מתכונים
+- [קוקטיילים עם בנדיקטין](https://barmenti.com/ingredient/benedictine/): 3 מתכונים
+- [קוקטיילים עם ג׳ינג׳ר אייל](https://barmenti.com/ingredient/ginger-ale/): 3 מתכונים
+- [קוקטיילים עם וודקה בטעמים](https://barmenti.com/ingredient/flavored-vodka/): 3 מתכונים
+- [קוקטיילים עם יין](https://barmenti.com/ingredient/still-wine/): 3 מתכונים
+- [קוקטיילים עם לילה בלאן](https://barmenti.com/ingredient/lillet-blanc/): 3 מתכונים
+- [קוקטיילים עם ליקר דובדבנים](https://barmenti.com/ingredient/cherry-liqueur/): 3 מתכונים
+- [קוקטיילים עם ליקר משמשים](https://barmenti.com/ingredient/apricot-brandy/): 3 מתכונים
+- [קוקטיילים עם סירופ אורז׳ה (שקדים)](https://barmenti.com/ingredient/orgeat/): 3 מתכונים
+- [קוקטיילים עם קוביית סוכר](https://barmenti.com/ingredient/sugar-cube/): 3 מתכונים
+- [קוקטיילים עם קרם דה קסיס](https://barmenti.com/ingredient/creme-de-cassis/): 3 מתכונים
+- [קוקטיילים עם רום ג׳מייקני ענברי](https://barmenti.com/ingredient/jamaican-amber-rum/): 3 מתכונים
+- [קוקטיילים עם תות שדה](https://barmenti.com/ingredient/strawberry/): 3 מתכונים
+
+## עוד
+
 - [כל המתכונים בקובץ אחד](https://barmenti.com/llms-full.txt)
+- [אודות](https://barmenti.com/about/): מאיפה המתכונים ואיך מחושבים המספרים
 - [האפליקציה](https://barmenti.com/app/): להורדה ב־App Store וב־Google Play

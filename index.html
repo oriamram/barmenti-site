@@ -3,9 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>ברמנ'תי</title>
-    <meta name="description" content="מעל 150 קוקטיילים בכיס: כמויות, כוס, גרניש ושלבי הכנה. למשמרת מאחורי הבר, ללילה בחוץ או לדייט. עובד גם בלי קליטה." />
+    <title>ברמנ'תי: מתכוני קוקטיילים בעברית, אפליקציה לברמנים</title>
+    <meta name="description" content="מעל 150 מתכוני קוקטיילים בעברית: כמויות, כוס, קישוט ושלבי הכנה. אפליקציה חינמית למשמרת מאחורי הבר, ללילה בחוץ או לדייט. עובדת גם בלי קליטה." />
+    <link rel="canonical" href="https://barmenti.com/" />
+    <link rel="alternate" hreflang="he" href="https://barmenti.com/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="theme-color" content="#17120F" />
+    <meta name="apple-itunes-app" content="app-id=6824944138" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="ברמנ'תי" />
     <meta property="og:url" content="https://barmenti.com/" />
@@ -22,7 +26,48 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&family=Karantina:wght@400;700&display=swap" />
-    <link rel="stylesheet" href="assets/landing.css" />
+    <link rel="stylesheet" href="assets/landing.css?v=2" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://barmenti.com/#organization",
+            "name": "ברמנ'תי",
+            "alternateName": ["Barmenti", "ברמנתי"],
+            "url": "https://barmenti.com/",
+            "logo": { "@type": "ImageObject", "url": "https://barmenti.com/assets/favicon.png" },
+            "sameAs": [
+              "https://apps.apple.com/il/app/id6824944138",
+              "https://play.google.com/store/apps/details?id=com.barmenti.app"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://barmenti.com/#website",
+            "name": "ברמנ'תי",
+            "alternateName": ["Barmenti", "ברמנתי"],
+            "url": "https://barmenti.com/",
+            "inLanguage": "he",
+            "publisher": { "@id": "https://barmenti.com/#organization" }
+          },
+          {
+            "@type": "MobileApplication",
+            "@id": "https://barmenti.com/#app",
+            "name": "ברמנ'תי",
+            "alternateName": ["Barmenti", "ברמנתי"],
+            "url": "https://barmenti.com/",
+            "description": "מתכוני קוקטיילים בעברית: כמויות, כוס, קישוט ושלבי הכנה, גם בלי קליטה.",
+            "operatingSystem": "Android, iOS",
+            "applicationCategory": "LifestyleApplication",
+            "inLanguage": "he",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "ILS" },
+            "publisher": { "@id": "https://barmenti.com/#organization" }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div class="wrap">
@@ -39,7 +84,7 @@
           <div class="hero-text">
             <h1 id="hero-title"><span>ברמנ'תי</span> <span>יודע הכל</span></h1>
             <p class="lead">
-              מעל 150 קוקטיילים בכיס. למשמרת עמוסה מאחורי הבר, ללילה בחוץ עם החבר'ה, או לדייט שצריך להרשים.
+              מעל 150 מתכוני קוקטיילים בעברית, בכיס. למשמרת עמוסה מאחורי הבר, ללילה בחוץ עם החבר'ה, או לדייט שצריך להרשים.
             </p>
             <div class="stores">
               <a class="store" data-store="apple" href="https://apps.apple.com/il/app/id6824944138" rel="noopener">
@@ -122,6 +167,63 @@
           <div class="shelf bleed" id="shelf"></div>
         </section>
 
+        <!-- generated:cocktails -->
+        <section class="section" aria-labelledby="recipes-title">
+          <h2 id="recipes-title">מתכוני קוקטיילים</h2>
+          <p class="section-intro">כל המתכונים פתוחים גם כאן באתר, עם כמויות, כוס ושלבי הכנה.</p>
+          <nav class="kinds" aria-label="לפי אלכוהול">
+            <a class="chip" href="/cocktails/gin/">ג׳ין</a>
+            <a class="chip" href="/cocktails/vodka/">וודקה</a>
+            <a class="chip" href="/cocktails/rum/">רום</a>
+            <a class="chip" href="/cocktails/tequila/">טקילה</a>
+            <a class="chip" href="/cocktails/mezcal/">מזקל</a>
+            <a class="chip" href="/cocktails/whiskey/">ויסקי</a>
+            <a class="chip" href="/cocktails/brandy/">ברנדי וקוניאק</a>
+            <a class="chip" href="/cocktails/pisco/">פיסקו</a>
+            <a class="chip" href="/cocktails/wine/">יין ובועות</a>
+            <a class="chip" href="/cocktails/liqueur/">ליקר ואפריטיף</a>
+            <a class="chip" href="/cocktails/zero/">בלי אלכוהול</a>
+          </nav>
+          <ul class="recipes">
+            <li><a href="/cocktail/negroni/">נגרוני<span lang="en">Negroni</span></a></li>
+            <li><a href="/cocktail/margarita/">מרגריטה<span lang="en">Margarita</span></a></li>
+            <li><a href="/cocktail/old-fashioned/">אולד פאשנד<span lang="en">Old Fashioned</span></a></li>
+            <li><a href="/cocktail/dry-martini/">דריי מרטיני<span lang="en">Dry Martini</span></a></li>
+            <li><a href="/cocktail/espresso-martini/">אספרסו מרטיני<span lang="en">Espresso Martini</span></a></li>
+            <li><a href="/cocktail/daiquiri/">דאיקירי<span lang="en">Daiquiri</span></a></li>
+            <li><a href="/cocktail/cosmopolitan/">קוסמופוליטן<span lang="en">Cosmopolitan</span></a></li>
+            <li><a href="/cocktail/aperol-spritz/">אפרול שפריץ<span lang="en">Aperol Spritz</span></a></li>
+            <li><a href="/cocktail/paloma/">פאלומה<span lang="en">Paloma</span></a></li>
+            <li><a href="/cocktail/whiskey-sour/">ויסקי סאוור<span lang="en">Whiskey Sour</span></a></li>
+            <li><a href="/cocktail/manhattan/">מנהטן<span lang="en">Manhattan</span></a></li>
+            <li><a href="/cocktail/amaretto-sour/">אמרטו סאוור<span lang="en">Amaretto Sour</span></a></li>
+            <li><a href="/cocktail/long-island-iced-tea/">לונג איילנד<span lang="en">Long Island Iced Tea</span></a></li>
+            <li><a href="/cocktail/mojito/">מוחיטו<span lang="en">Mojito</span></a></li>
+            <li><a href="/cocktail/gin-and-tonic/">ג׳ין טוניק<span lang="en">Gin &amp; Tonic</span></a></li>
+            <li><a href="/cocktail/gimlet/">גימלט<span lang="en">Gimlet</span></a></li>
+            <li><a href="/cocktail/sex-on-the-beach/">סקס און דה ביץ׳<span lang="en">Sex on the Beach</span></a></li>
+            <li><a href="/cocktail/bloody-mary/">בלאדי מרי<span lang="en">Bloody Mary</span></a></li>
+            <li><a href="/cocktail/tommys-margarita/">טומיז מרגריטה<span lang="en">Tommy's Margarita</span></a></li>
+            <li><a href="/cocktail/americano/">אמריקנו<span lang="en">Americano</span></a></li>
+            <li><a href="/cocktail/white-russian/">וייט ראשן<span lang="en">White Russian</span></a></li>
+            <li><a href="/cocktail/hugo-spritz/">הוגו שפריץ<span lang="en">Hugo Spritz</span></a></li>
+            <li><a href="/cocktail/moscow-mule/">מוסקו מיול<span lang="en">Moscow Mule</span></a></li>
+            <li><a href="/cocktail/bamboo/">במבו<span lang="en">Bamboo</span></a></li>
+          </ul>
+          <nav class="kinds" aria-label="אוספים">
+            <a class="chip" href="/cocktails/iba/">IBA</a>
+            <a class="chip" href="/cocktails/easy/">קלים להכנה</a>
+            <a class="chip" href="/cocktails/three-ingredients/">3 מרכיבים</a>
+            <a class="chip" href="/cocktails/tiki/">טיקי</a>
+            <a class="chip" href="/cocktails/spritz/">שפריץ</a>
+            <a class="chip" href="/cocktails/winter/">לחורף</a>
+            <a class="chip" href="/cocktails/screen/">מסרטים וסדרות</a>
+            <a class="chip" href="/ingredients/">לפי מרכיב</a>
+          </nav>
+          <a class="all-recipes" href="/cocktails/">כל 179 הקוקטיילים</a>
+        </section>
+        <!-- /generated:cocktails -->
+
         <section class="section" aria-labelledby="menu-title">
           <div class="menu-card">
             <h2 id="menu-title">מה בתפריט</h2>
@@ -151,13 +253,15 @@
       <footer class="foot">
         <nav aria-label="קישורים">
           <a href="cocktails/">כל הקוקטיילים</a>
+          <a href="ingredients/">מרכיבים</a>
+          <a href="about/">אודות</a>
           <a href="privacy/">מדיניות פרטיות</a>
           <a href="terms/">תנאי שימוש</a>
           <a href="delete-account/">מחיקת חשבון</a>
           <a href="mailto:oriamram111@gmail.com">צרו קשר</a>
         </nav>
         <p>ברמנ'תי מיועדת לבני 18 ומעלה. שתו באחריות. תמונות הקוקטיילים באתר הן הדמיות.</p>
-        <p>© 2026 ברמנ'תי</p>
+        <p>© 2026 ברמנ'תי (Barmenti)</p>
       </footer>
     </div>
 

@@ -13,6 +13,14 @@ Live at <https://barmenti.com/> (DNS at GoDaddy; the old <https://oriamram.githu
 | `/terms/`            | `terms.md`          | the app (settings, sign-up)                   |
 | `/delete-account/`   | `delete-account.md` | Google Play (account deletion URL)            |
 
+The catalog's pages are written by the app repository's `scripts/build-site-cocktails.ts` (run
+there; never edit them here): `cocktail/<id>/`, `cocktails/` and `cocktails/<slug>/` (by base
+spirit, by flavor, the collections), `ingredient/<id>/`, `ingredients/`, `about/`, `404.html`,
+`sitemap.xml`, `llms.txt`, `llms-full.txt`, `photos/`, and the part of `index.html` between its
+`generated:cocktails` marks. Their look is `assets/cocktail.css`. `app/` (the link people share:
+a phone goes to its store) and `join/` (a bar device's QR code) are kept by hand and ask not to
+be indexed.
+
 - **Edit a page:** change its Markdown and push; GitHub Pages rebuilds within a minute or two. When
   a policy changes, update its "עודכן לאחרונה" date.
 - **Landing page:** `index.html` is plain HTML (no Jekyll layout), mobile first, with its own

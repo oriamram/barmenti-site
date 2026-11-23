@@ -374,6 +374,57 @@ h3 {
   cursor: pointer;
 }
 
+a.chip {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+/* The recipes on the site: the pages by base spirit, then the best known names. */
+.kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recipes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recipes a {
+  display: block;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--edge);
+  color: var(--cream);
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.recipes span {
+  display: block;
+  color: var(--cream-muted);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.all-recipes {
+  justify-self: start;
+  color: var(--amber);
+  font-weight: 600;
+}
+
+@media (min-width: 600px) {
+  .recipes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 .chip[aria-pressed='true'] {
   background: var(--campari);
   border-color: var(--campari);
