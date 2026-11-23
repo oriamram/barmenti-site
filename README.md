@@ -21,6 +21,9 @@ spirit, by flavor, the collections), `ingredient/<id>/`, `ingredients/`, `about/
 a phone goes to its store) and `join/` (a bar device's QR code) are kept by hand and ask not to
 be indexed.
 
+`google7517e5840fa63530.html` and the `google-site-verification` tag on the home page prove to
+Google Search Console that the site is ours: don't remove them.
+
 - **Edit a page:** change its Markdown and push; GitHub Pages rebuilds within a minute or two. When
   a policy changes, update its "עודכן לאחרונה" date.
 - **Landing page:** `index.html` is plain HTML (no Jekyll layout), mobile first, with its own
